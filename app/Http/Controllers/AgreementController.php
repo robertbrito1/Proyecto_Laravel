@@ -11,16 +11,17 @@ use Illuminate\Support\Facades\Auth;
 
 class AgreementController extends Controller
 {
-    /** Permitted statuses and their display labels */
+    /** Permitted statuses and their display labels (must match DB enum in agreements migration) */
     public const STATUSES = [
-        'borrador'            => 'Borrador',
-        'pendiente_firma'     => 'Pendiente de firma',
-        'firmado_empresa'     => 'Firmado por empresa',
-        'firmado_centro'      => 'Firmado por centro',
-        'activo'              => 'Activo',
-        'finalizado'          => 'Finalizado',
-        'cancelado'           => 'Cancelado',
-        'renovacion'          => 'En renovación',
+        'borrador'                => 'Borrador',
+        'pendiente_generacion'    => 'Pendiente de generación',
+        'generado'                => 'Generado',
+        'pendiente_firma_empresa' => 'Pendiente firma empresa',
+        'firmado_empresa'         => 'Firmado por empresa',
+        'pendiente_firma_centro'  => 'Pendiente firma centro',
+        'en_vigor'                => 'En vigor',
+        'erroneo'                 => 'Erróneo',
+        'caducado'                => 'Caducado',
     ];
 
     /** Roles that can create/edit agreements */
@@ -107,7 +108,8 @@ class AgreementController extends Controller
 
         $statuses    = self::STATUSES;
         $canSign     = in_array(Auth::user()->role, self::CAN_SIGN);
-        $canEdit     = in_array(Auth::user()->role, self::CAN_WRITE);
+        $canEdit     = in_array(Auth::user()->role, self::CAN_WRITE) &&
+                       ! in_array($agreement->status, ['en_vigor', 'caducado']);
 
         return view('convenios.show', compact('agreement', 'statuses', 'canSign', 'canEdit'));
     }
@@ -170,7 +172,7 @@ class AgreementController extends Controller
         abort_unless(in_array(Auth::user()->role, self::CAN_SIGN), 403);
 
         $agreement->update([
-            'status'    => 'firmado_centro',
+            'status'    => 'en_vigor',
             'signed_at' => now(),
         ]);
 

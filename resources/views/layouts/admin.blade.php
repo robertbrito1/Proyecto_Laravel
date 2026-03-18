@@ -8,10 +8,32 @@
 </head>
 <body class="bg-body-tertiary">
 @php
-    $currentRole = session('role', 'invitado');
+    $currentRole = auth()->user()?->role ?? session('role', 'invitado');
     $isAdmin = $currentRole === 'administrador';
     $isDireccion = $currentRole === 'direccion';
-    $homeRoute = $isDireccion && ! $isAdmin ? route('direccion.convenios') : route('admin.dashboard');
+    $isCoordinadorFFE = $currentRole === 'coordinadorFFE';
+    $roleLabels = [
+        'administrador' => 'Administrador',
+        'direccion' => 'Direccion',
+        'coordinadorFFE' => 'Coordinador FFE',
+        'tutor' => 'Tutor',
+        'profesor' => 'Profesor',
+        'secretaria' => 'Secretaria',
+        'empresa' => 'Empresa',
+        'invitado' => 'Invitado',
+    ];
+    $currentRoleLabel = $roleLabels[$currentRole] ?? ucfirst($currentRole);
+    $homeRoute = route('login');
+
+    if ($isAdmin) {
+        $homeRoute = route('admin.dashboard');
+    } elseif ($isDireccion) {
+        $homeRoute = route('direccion.convenios');
+    } elseif ($isCoordinadorFFE) {
+        $homeRoute = route('coordinacion.departamentos');
+    } elseif (in_array($currentRole, ['profesor', 'tutor'], true)) {
+        $homeRoute = route('coordinacion.empresas-contactadas');
+    }
 @endphp
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
     <div class="container-fluid px-3 px-lg-4">
@@ -23,18 +45,34 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                 @if ($isAdmin)
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.convenios') ? 'active' : '' }}" href="{{ route('admin.convenios') }}">Convenios</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.empresas') ? 'active' : '' }}" href="{{ route('admin.empresas') }}">Empresas</a></li>
+                @endif
+                {{-- Convenios y Empresas: visibles para todos --}}
+                <li class="nav-item"><a class="nav-link {{ request()->routeIs('convenios.*') ? 'active' : '' }}" href="{{ route('convenios.index') }}">Convenios</a></li>
+                @if (in_array($currentRole, ['administrador','coordinadorFFE','secretaria']))
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('empresas.*') ? 'active' : '' }}" href="{{ route('empresas.index') }}">Empresas</a></li>
+                @endif
+                @if ($isAdmin)
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}" href="{{ route('admin.usuarios') }}">Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.informes') ? 'active' : '' }}" href="{{ route('admin.informes') }}">Informes</a></li>
+                @endif
+                @if ($isAdmin || $isCoordinadorFFE)
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('coordinacion.departamentos') ? 'active' : '' }}" href="{{ route('coordinacion.departamentos') }}">Gestion de departamentos</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('coordinacion.categorias-empresas') ? 'active' : '' }}" href="{{ route('coordinacion.categorias-empresas') }}">Categorias de empresa</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('coordinacion.informes') ? 'active' : '' }}" href="{{ route('coordinacion.informes') }}">Informes FFE</a></li>
+                @endif
+                @if ($isAdmin || $isCoordinadorFFE || in_array($currentRole, ['profesor', 'tutor'], true))
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('coordinacion.empresas-contactadas') ? 'active' : '' }}" href="{{ route('coordinacion.empresas-contactadas') }}">Empresas contactadas</a></li>
                 @endif
                 @if ($isAdmin || $isDireccion)
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('direccion.convenios') ? 'active' : '' }}" href="{{ route('direccion.convenios') }}">Firmar convenios</a></li>
                 @endif
             </ul>
             <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
-                <span class="badge text-bg-light border">Rol: {{ ucfirst($currentRole) }}</span>
-                <a class="btn btn-outline-secondary btn-sm" href="{{ route('login') }}">Cerrar sesion</a>
+                <span class="badge text-bg-light border">Rol: {{ $currentRoleLabel }}</span>
+                <form method="POST" action="{{ route('logout') }}" class="m-0">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">Cerrar sesion</button>
+                </form>
             </div>
         </div>
     </div>

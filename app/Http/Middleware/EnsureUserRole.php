@@ -10,7 +10,13 @@ class EnsureUserRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $currentRole = (string) $request->session()->get('role', 'invitado');
+        $user = $request->user();
+
+        if (! $user) {
+            return redirect()->route('login');
+        }
+
+        $currentRole = (string) $user->role;
 
         if (empty($roles) || in_array($currentRole, $roles, true)) {
             return $next($request);

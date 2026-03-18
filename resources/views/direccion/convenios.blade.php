@@ -1,11 +1,14 @@
+@php
+    return redirect()->route('convenios.index', ['status' => 'pendiente_firma']);
+@endphp
+
 @extends('layouts.admin')
 
 @section('title', 'Direccion - Firma de Convenios')
 
 @section('content')
 @php
-    $role = session('role', 'invitado');
-    $canSign = $role === 'direccion';
+    $canSign = auth()->user()?->role === 'direccion';
 @endphp
 
 <div class="row g-3">

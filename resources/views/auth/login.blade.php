@@ -27,18 +27,31 @@
 
                         <section class="col-12 col-md-6 p-4 p-lg-5">
                             <h2 class="h4 mb-2">Iniciar sesión</h2>
-                            <p class="text-secondary mb-4">Entra con tu usuario o con Google.</p>
+                            <p class="text-secondary mb-4">Entra con tu correo y tu password.</p>
 
-                            <form method="POST" action="#" onsubmit="return false;" novalidate>
+                            @if ($errors->any())
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $errors->first() }}
+                                </div>
+                            @endif
+
+                            <form method="POST" action="{{ route('login.store') }}" novalidate>
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="username" class="form-label">Usuario o correo</label>
-                                    <input id="username" name="username" type="text" class="form-control" placeholder="ejemplo@dominio.com" autocomplete="username" required>
+                                    <label for="email" class="form-label">Correo</label>
+                                    <input id="email" name="email" type="email" class="form-control" placeholder="ejemplo@dominio.com" autocomplete="username" value="{{ old('email') }}" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
                                     <input id="password" name="password" type="password" class="form-control" placeholder="********" autocomplete="current-password" required>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="remember" name="remember">
+                                    <label class="form-check-label" for="remember">
+                                        Recordarme
+                                    </label>
                                 </div>
 
                                 <div class="d-grid gap-2 mt-4">
@@ -50,7 +63,7 @@
                                         <hr class="flex-grow-1 m-0">
                                     </div>
 
-                                    <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2">
+                                    <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2" disabled>
                                         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
                                             <path fill="#EA4335" d="M24 9.5c3.65 0 6.93 1.26 9.52 3.72l7.1-7.1C36.3 2.17 30.6 0 24 0 14.64 0 6.53 5.4 2.6 13.28l8.28 6.43C12.86 13.12 17.98 9.5 24 9.5Z"/>
                                             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.14-3.08-.4-4.55H24v8.62h12.9c-.55 2.96-2.23 5.46-4.73 7.13l7.25 5.62c4.22-3.88 6.56-9.59 6.56-16.82Z"/>

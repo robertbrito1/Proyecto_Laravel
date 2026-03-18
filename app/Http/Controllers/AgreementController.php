@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AgreementController extends Controller
 {
-    /** Permitted statuses and their display labels (must match DB enum in agreements migration) */
+    /** Estados permitidos y sus etiquetas (deben coincidir con el enum de la migración de convenios) */
     public const STATUSES = [
         'borrador'                => 'Borrador',
         'pendiente_generacion'    => 'Pendiente de generación',
@@ -24,13 +24,13 @@ class AgreementController extends Controller
         'caducado'                => 'Caducado',
     ];
 
-    /** Roles that can create/edit agreements */
+    /** Roles que pueden crear/editar convenios */
     private const CAN_WRITE = ['administrador', 'coordinadorFFE', 'secretaria', 'tutor', 'profesor'];
 
-    /** Roles that can sign (change to firmado_centro) */
+    /** Roles que pueden firmar (cambiar a en_vigor) */
     private const CAN_SIGN = ['direccion', 'administrador'];
 
-    // ─── List ────────────────────────────────────────────────────────────────
+    // ─── Listado ─────────────────────────────────────────────────────────────
 
     public function index(Request $request)
     {
@@ -55,7 +55,7 @@ class AgreementController extends Controller
         return view('convenios.index', compact('agreements', 'departments', 'statuses'));
     }
 
-    // ─── Create ──────────────────────────────────────────────────────────────
+    // ─── Crear ───────────────────────────────────────────────────────────────
 
     public function create()
     {
@@ -93,7 +93,7 @@ class AgreementController extends Controller
             ->with('success', 'Convenio creado correctamente.');
     }
 
-    // ─── Show ────────────────────────────────────────────────────────────────
+    // ─── Detalle ─────────────────────────────────────────────────────────────
 
     public function show(Agreement $agreement)
     {
@@ -114,7 +114,7 @@ class AgreementController extends Controller
         return view('convenios.show', compact('agreement', 'statuses', 'canSign', 'canEdit'));
     }
 
-    // ─── Edit ────────────────────────────────────────────────────────────────
+    // ─── Editar ──────────────────────────────────────────────────────────────
 
     public function edit(Agreement $agreement)
     {
@@ -150,7 +150,7 @@ class AgreementController extends Controller
             ->with('success', 'Convenio actualizado correctamente.');
     }
 
-    // ─── Delete ──────────────────────────────────────────────────────────────
+    // ─── Eliminar ────────────────────────────────────────────────────────────
 
     public function destroy(Agreement $agreement)
     {
@@ -165,7 +165,7 @@ class AgreementController extends Controller
             ->with('success', 'Convenio eliminado.');
     }
 
-    // ─── Sign (Dirección) ────────────────────────────────────────────────────
+    // ─── Firmar (Dirección) ──────────────────────────────────────────────────
 
     public function sign(Agreement $agreement)
     {
@@ -180,7 +180,7 @@ class AgreementController extends Controller
             ->with('success', 'Convenio marcado como firmado por el centro.');
     }
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────
+    // ─── Utilidades ──────────────────────────────────────────────────────────
 
     private function authorizeWrite(): void
     {

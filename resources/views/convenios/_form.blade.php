@@ -13,8 +13,8 @@
 <div class="row g-3">
     {{-- Empresa --}}
     <div class="col-12">
-        <label class="form-label fw-semibold">Empresa <span class="text-danger">*</span></label>
-        <select name="company_id" class="form-select @error('company_id') is-invalid @enderror" required>
+        <label for="company_id" class="form-label fw-semibold">Empresa <span class="text-danger" aria-hidden="true">*</span></label>
+        <select id="company_id" name="company_id" class="form-select @error('company_id') is-invalid @enderror" required aria-required="true">
             <option value="">Selecciona empresa...</option>
             @foreach ($companies as $company)
                 <option value="{{ $company->id }}"
@@ -28,8 +28,8 @@
 
     {{-- Departamento --}}
     <div class="col-12 col-md-6">
-        <label class="form-label fw-semibold">Departamento <span class="text-danger">*</span></label>
-        <select name="department_id" class="form-select @error('department_id') is-invalid @enderror" required>
+        <label for="department_id" class="form-label fw-semibold">Departamento <span class="text-danger" aria-hidden="true">*</span></label>
+        <select id="department_id" name="department_id" class="form-select @error('department_id') is-invalid @enderror" required aria-required="true">
             <option value="">Selecciona departamento...</option>
             @foreach ($departments as $dept)
                 <option value="{{ $dept->id }}"
@@ -43,8 +43,8 @@
 
     {{-- Estado --}}
     <div class="col-12 col-md-6">
-        <label class="form-label fw-semibold">Estado <span class="text-danger">*</span></label>
-        <select name="status" class="form-select @error('status') is-invalid @enderror" required>
+        <label for="status" class="form-label fw-semibold">Estado <span class="text-danger" aria-hidden="true">*</span></label>
+        <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required aria-required="true">
             @foreach ($statuses as $key => $label)
                 <option value="{{ $key }}"
                     {{ old('status', $agreement?->status ?? 'borrador') === $key ? 'selected' : '' }}>
@@ -57,8 +57,8 @@
 
     {{-- Profesor / Tutor asignado --}}
     <div class="col-12 col-md-6">
-        <label class="form-label">Profesor / Tutor asignado</label>
-        <select name="assigned_teacher_id" class="form-select @error('assigned_teacher_id') is-invalid @enderror">
+        <label for="assigned_teacher_id" class="form-label">Profesor / Tutor asignado</label>
+        <select id="assigned_teacher_id" name="assigned_teacher_id" class="form-select @error('assigned_teacher_id') is-invalid @enderror">
             <option value="">— Sin asignar —</option>
             @foreach ($teachers as $teacher)
                 <option value="{{ $teacher->id }}"
@@ -72,8 +72,8 @@
 
     {{-- Tutor IES --}}
     <div class="col-12 col-md-6">
-        <label class="form-label">Tutor IES</label>
-        <select name="ies_tutor_user_id" class="form-select @error('ies_tutor_user_id') is-invalid @enderror">
+        <label for="ies_tutor_user_id" class="form-label">Tutor IES</label>
+        <select id="ies_tutor_user_id" name="ies_tutor_user_id" class="form-select @error('ies_tutor_user_id') is-invalid @enderror">
             <option value="">— Sin asignar —</option>
             @foreach ($teachers as $teacher)
                 <option value="{{ $teacher->id }}"
@@ -89,30 +89,30 @@
     <div class="col-12"><hr class="my-1"><p class="text-muted small mb-1">Persona de contacto (gestión del convenio)</p></div>
 
     <div class="col-12 col-md-4">
-        <label class="form-label">Nombre</label>
-        <input type="text" name="management_contact_name" class="form-control @error('management_contact_name') is-invalid @enderror"
+        <label for="management_contact_name" class="form-label">Nombre</label>
+        <input id="management_contact_name" type="text" name="management_contact_name" class="form-control @error('management_contact_name') is-invalid @enderror"
             value="{{ old('management_contact_name', $agreement?->management_contact_name) }}" maxlength="255">
         @error('management_contact_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-12 col-md-4">
-        <label class="form-label">Telefono</label>
-        <input type="text" name="management_contact_phone" class="form-control @error('management_contact_phone') is-invalid @enderror"
+        <label for="management_contact_phone" class="form-label">Telefono</label>
+        <input id="management_contact_phone" type="text" name="management_contact_phone" class="form-control @error('management_contact_phone') is-invalid @enderror"
             value="{{ old('management_contact_phone', $agreement?->management_contact_phone) }}" maxlength="30">
         @error('management_contact_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     <div class="col-12 col-md-4">
-        <label class="form-label">Email</label>
-        <input type="email" name="management_contact_email" class="form-control @error('management_contact_email') is-invalid @enderror"
+        <label for="management_contact_email" class="form-label">Email</label>
+        <input id="management_contact_email" type="email" name="management_contact_email" class="form-control @error('management_contact_email') is-invalid @enderror"
             value="{{ old('management_contact_email', $agreement?->management_contact_email) }}" maxlength="255">
         @error('management_contact_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
     {{-- Notas --}}
     <div class="col-12">
-        <label class="form-label">Notas internas</label>
-        <textarea name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3" maxlength="2000">{{ old('notes', $agreement?->notes) }}</textarea>
+        <label for="notes" class="form-label">Notas internas</label>
+        <textarea id="notes" name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3" maxlength="2000">{{ old('notes', $agreement?->notes) }}</textarea>
         @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 </div>

@@ -6,27 +6,27 @@
     <title>Acceso | {{ config('app.name', 'Laravel') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-<body class="bg-body-tertiary">
+<body class="bg-secondary">
     <main class="container py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 col-xl-9">
                 <div class="card shadow-sm border-0 overflow-hidden">
                     <div class="row g-0">
                         <section class="col-12 col-md-6 bg-primary-subtle p-4 p-lg-5 d-flex flex-column justify-content-center">
-                            <p class="text-primary fw-semibold text-uppercase small mb-2">Bienvenido</p>
+                            <p class="text-primary fw-semibold text-uppercase  h2 mb-2s">Bienvenido</p>
                             <h1 class="h3 fw-bold mb-3">Ingresa con tu cuenta</h1>
                             <p class="text-secondary mb-4">
                                 Escribe tu usuario y contraseña para entrar.
                             </p>
                             <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-transparent px-0">Acceso rápido y claro</li>
+                                <li class="list-group-item bg-transparent px-0">Gestion de los convenios de las FFE</li>
                                 <li class="list-group-item bg-transparent px-0">Compatible con inicio por Google</li>
-                                <li class="list-group-item bg-transparent px-0">Diseño responsive</li>
+                                
                             </ul>
                         </section>
 
                         <section class="col-12 col-md-6 p-4 p-lg-5">
-                            <h2 class="h4 mb-2">Iniciar sesion</h2>
+                            <h2 class="h4 mb-2">Iniciar sesión</h2>
                             <p class="text-secondary mb-4">Entra con tu usuario o con Google.</p>
 
                             <form method="POST" action="#" onsubmit="return false;" novalidate>

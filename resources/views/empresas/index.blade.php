@@ -13,17 +13,19 @@
 @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
 @endif
 
 {{-- Filtros --}}
-<form method="GET" action="{{ route('empresas.index') }}" class="row g-2 mb-3">
+<form method="GET" action="{{ route('empresas.index') }}" class="row g-2 mb-3" role="search" aria-label="Filtrar empresas">
     <div class="col-12 col-md-5">
-        <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Buscar por nombre, CIF o actividad...">
+        <label for="filter-search" class="visually-hidden">Buscar empresa</label>
+        <input id="filter-search" type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Buscar por nombre, CIF o actividad...">
     </div>
     <div class="col-6 col-md-3">
-        <select name="category" class="form-select form-select-sm">
+        <label for="filter-category" class="visually-hidden">Categoría</label>
+        <select id="filter-category" name="category" class="form-select form-select-sm">
             <option value="">Todas las categorias</option>
             @foreach ($categories as $key => $label)
                 <option value="{{ $key }}" {{ request('category') === $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -38,16 +40,16 @@
 
 <div class="card shadow-sm">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0" aria-label="Listado de empresas">
             <thead class="table-light">
                 <tr>
-                    <th>Razon social</th>
-                    <th>CIF</th>
-                    <th>Actividad</th>
-                    <th>Categoria</th>
-                    <th>Telefono</th>
-                    <th>Convenios</th>
-                    <th></th>
+                    <th scope="col">Razon social</th>
+                    <th scope="col">CIF</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Telefono</th>
+                    <th scope="col">Convenios</th>
+                    <th scope="col"><span class="visually-hidden">Acciones</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -68,7 +70,8 @@
                             <span class="badge text-bg-light border">{{ $companyItem->agreements_count }}</span>
                         </td>
                         <td>
-                            <a href="{{ route('empresas.show', $companyItem) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{{ route('empresas.show', $companyItem) }}" class="btn btn-sm btn-outline-primary"
+                               aria-label="Ver empresa {{ $companyItem->business_name }}">Ver</a>
                         </td>
                     </tr>
                 @empty

@@ -78,11 +78,11 @@
                 <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                     <tr>
-                        <th>Empresa</th>
-                        <th class="d-none d-md-table-cell">Tutor</th>
-                        <th class="d-none d-lg-table-cell">Departamento</th>
-                        <th>Estado</th>
-                        <th>Actualizado</th>
+                        <th scope="col">Empresa</th>
+                        <th scope="col" class="d-none d-md-table-cell">Tutor</th>
+                        <th scope="col" class="d-none d-lg-table-cell">Departamento</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Actualizado</th>
                     </tr>
                     </thead>
                     <tbody>

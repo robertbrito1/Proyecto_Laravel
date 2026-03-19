@@ -6,10 +6,10 @@
 <div class="mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
     <a href="{{ route('convenios.index') }}" class="text-decoration-none text-muted small">&larr; Volver a convenios</a>
     <div class="d-flex gap-2 flex-wrap">
-        @if ($canEdit && !in_array($agreement->status, ['activo','finalizado','cancelado']))
+        @if ($canEdit)
             <a href="{{ route('convenios.edit', $agreement) }}" class="btn btn-sm btn-outline-secondary">Editar</a>
         @endif
-        @if ($canSign && $agreement->status === 'pendiente_firma')
+        @if ($canSign && $agreement->status === 'pendiente_firma_centro')
             <form method="POST" action="{{ route('convenios.sign', $agreement) }}" class="m-0">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-success">Firmar convenio</button>
@@ -29,20 +29,20 @@
 @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
 @endif
 
 @php
     // Visual state color for agreement status badges
     $statusBadgeClass = match($agreement->status) {
-    'activo'          => 'success',
-    'firmado_centro', 'firmado_empresa' => 'primary',
-    'pendiente_firma' => 'warning',
-    'cancelado'       => 'danger',
-    'finalizado'      => 'secondary',
-    'renovacion'      => 'info',
-    default           => 'light text-dark',
+        'activo'          => 'success',
+        'firmado_centro', 'firmado_empresa' => 'primary',
+        'pendiente_firma' => 'warning',
+        'cancelado'       => 'danger',
+        'finalizado'      => 'secondary',
+        'renovacion'      => 'info',
+        default           => 'light text-dark',
     };
 @endphp
 
@@ -145,10 +145,10 @@
                 <table class="table table-sm align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Nombre</th>
-                            <th>DNI</th>
-                            <th>Cargo</th>
-                            <th>Horario / Turno</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">DNI</th>
+                            <th scope="col">Cargo</th>
+                            <th scope="col">Horario / Turno</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -176,10 +176,10 @@
                 <table class="table table-sm align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Version</th>
-                            <th>Estado</th>
-                            <th>Subido el</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Version</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Subido el</th>
                         </tr>
                     </thead>
                     <tbody>

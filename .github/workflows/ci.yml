@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  laravel:
+    name: Laravel (PHP 8.3)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, bcmath, sqlite3, pdo_sqlite
+          coverage: none
+
+      - name: Copiar archivo de entorno
+        run: cp .env.example .env
+
+      - name: Instalar dependencias de Composer
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Generar clave de aplicación
+        run: php artisan key:generate
+
+      - name: Crear base de datos SQLite
+        run: touch database/database.sqlite
+
+      - name: Ejecutar migraciones
+        run: php artisan migrate --force
+
+      - name: Ejecutar pruebas
+        run: php artisan test

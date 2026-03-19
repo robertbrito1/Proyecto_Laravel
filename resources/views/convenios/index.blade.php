@@ -33,8 +33,8 @@
     <div class="col-6 col-md-3">
         <select name="department_id" class="form-select form-select-sm">
             <option value="">Todos los departamentos</option>
-            @foreach ($departments as $dept)
-                <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+            @foreach ($departments as $department)
+                <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
             @endforeach
         </select>
     </div>
@@ -60,14 +60,15 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($agreements as $ag)
+                @forelse ($agreements as $agreementItem)
                     <tr>
-                        <td class="text-muted small">{{ $ag->id }}</td>
-                        <td>{{ $ag->company?->business_name ?? '—' }}</td>
-                        <td>{{ $ag->department?->name ?? '—' }}</td>
-                        <td>{{ $ag->assignedTeacher?->name ?? '—' }}</td>
+                        <td class="text-muted small">{{ $agreementItem->id }}</td>
+                        <td>{{ $agreementItem->company?->business_name ?? '—' }}</td>
+                        <td>{{ $agreementItem->department?->name ?? '—' }}</td>
+                        <td>{{ $agreementItem->assignedTeacher?->name ?? '—' }}</td>
                         <td>
-                            @php $badge = match($ag->status) {
+                            {{-- Bootstrap badge color based on agreement status --}}
+                            @php $statusBadgeClass = match($agreementItem->status) {
                                 'activo'          => 'success',
                                 'firmado_centro', 'firmado_empresa' => 'primary',
                                 'pendiente_firma' => 'warning',
@@ -76,11 +77,11 @@
                                 'renovacion'      => 'info',
                                 default           => 'light text-dark',
                             }; @endphp
-                            <span class="badge text-bg-{{ $badge }}">{{ $statuses[$ag->status] ?? $ag->status }}</span>
+                            <span class="badge text-bg-{{ $statusBadgeClass }}">{{ $statuses[$agreementItem->status] ?? $agreementItem->status }}</span>
                         </td>
-                        <td class="small text-muted">{{ $ag->created_at->format('d/m/Y') }}</td>
+                        <td class="small text-muted">{{ $agreementItem->created_at->format('d/m/Y') }}</td>
                         <td>
-                            <a href="{{ route('convenios.show', $ag) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{{ route('convenios.show', $agreementItem) }}" class="btn btn-sm btn-outline-primary">Ver</a>
                         </td>
                     </tr>
                 @empty

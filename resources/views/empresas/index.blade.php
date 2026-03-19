@@ -51,24 +51,24 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($companies as $co)
+                @forelse ($companies as $companyItem)
                     <tr>
-                        <td class="fw-semibold">{{ $co->business_name }}</td>
-                        <td class="small text-muted">{{ $co->tax_id ?? '—' }}</td>
-                        <td class="small">{{ $co->activity ?? '—' }}</td>
+                        <td class="fw-semibold">{{ $companyItem->business_name }}</td>
+                        <td class="small text-muted">{{ $companyItem->tax_id ?? '—' }}</td>
+                        <td class="small">{{ $companyItem->activity ?? '—' }}</td>
                         <td>
-                            @if ($co->category)
-                                <span class="badge text-bg-secondary">{{ $categories[$co->category] ?? $co->category }}</span>
+                            @if ($companyItem->category)
+                                <span class="badge text-bg-secondary">{{ $categories[$companyItem->category] ?? $companyItem->category }}</span>
                             @else
                                 <span class="text-muted small">—</span>
                             @endif
                         </td>
-                        <td class="small">{{ $co->main_phone ?? '—' }}</td>
+                        <td class="small">{{ $companyItem->main_phone ?? '—' }}</td>
                         <td>
-                            <span class="badge text-bg-light border">{{ $co->agreements_count }}</span>
+                            <span class="badge text-bg-light border">{{ $companyItem->agreements_count }}</span>
                         </td>
                         <td>
-                            <a href="{{ route('empresas.show', $co) }}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{{ route('empresas.show', $companyItem) }}" class="btn btn-sm btn-outline-primary">Ver</a>
                         </td>
                     </tr>
                 @empty

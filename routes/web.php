@@ -3,6 +3,7 @@
 use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyContactController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,13 @@ Route::middleware('role')->group(function () {
     Route::get('/empresas/{company}/editar', [CompanyController::class, 'edit'])->name('empresas.edit');
     Route::put('/empresas/{company}',        [CompanyController::class, 'update'])->name('empresas.update');
     Route::delete('/empresas/{company}',     [CompanyController::class, 'destroy'])->name('empresas.destroy');
+
+    Route::post('/empresas/{company}/contactos', [CompanyContactController::class, 'store'])
+        ->name('empresas.contactos.store');
+    Route::put('/empresas/{company}/contactos/{contact}', [CompanyContactController::class, 'update'])
+        ->name('empresas.contactos.update');
+    Route::delete('/empresas/{company}/contactos/{contact}', [CompanyContactController::class, 'destroy'])
+        ->name('empresas.contactos.destroy');
 });
 
 // ── Convenios CRUD ─────────────────────────────────────────────────────────

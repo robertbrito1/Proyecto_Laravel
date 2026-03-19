@@ -7,6 +7,59 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Instalación y configuración del proyecto
+
+Sigue estos pasos para instalar las dependencias y activar `php artisan` en tu entorno local:
+
+### Requisitos previos
+
+- PHP >= 8.3
+- [Composer](https://getcomposer.org/)
+- Node.js y npm (para los assets del frontend)
+
+### Pasos de instalación
+
+```bash
+# 1. Clonar el repositorio (si aún no lo tienes)
+git clone https://github.com/robertbrito1/Proyecto_Laravel.git
+cd Proyecto_Laravel
+
+# 2. Instalar las dependencias de PHP (activa php artisan)
+composer install
+
+# 3. Copiar el archivo de entorno
+cp .env.example .env
+
+# 4. Generar la clave de la aplicación
+php artisan key:generate
+
+# 5. Crear la base de datos SQLite
+touch database/database.sqlite
+
+# 6. Ejecutar las migraciones
+php artisan migrate
+
+# 7. (Opcional) Instalar dependencias de Node.js y compilar assets
+npm install
+npm run build
+```
+
+O bien, puedes ejecutar todos los pasos anteriores de una sola vez usando el script de configuración incluido:
+
+```bash
+composer run setup
+```
+
+### Iniciar el servidor de desarrollo
+
+```bash
+php artisan serve
+```
+
+El servidor estará disponible en `http://localhost:8000`.
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

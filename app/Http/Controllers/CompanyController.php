@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,28 +17,28 @@ class CompanyController extends Controller
         'regular'           => 'Empresa (regular)',
     ];
 
-    private const CAN_WRITE = ['administrador', 'coordinadorFFE', 'secretaria'];
+    private const WRITE_ALLOWED_ROLES = ['administrador', 'coordinadorFFE', 'secretaria'];
 
     // ─── List ────────────────────────────────────────────────────────────────
 
     public function index(Request $request)
     {
-        $query = Company::withCount('agreements')->latest();
+        $companyQuery = Company::withCount('agreements')->latest();
 
         if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('business_name', 'like', "%$s%")
-                  ->orWhere('tax_id', 'like', "%$s%")
-                  ->orWhere('activity', 'like', "%$s%");
+            $searchTerm = $request->input('search');
+            $companyQuery->where(function ($searchQuery) use ($searchTerm) {
+                $searchQuery->where('business_name', 'like', "%$searchTerm%")
+                    ->orWhere('tax_id', 'like', "%$searchTerm%")
+                    ->orWhere('activity', 'like', "%$searchTerm%");
             });
         }
 
         if ($request->filled('category')) {
-            $query->where('category', $request->category);
+            $companyQuery->where('category', $request->input('category'));
         }
 
-        $companies  = $query->paginate(20)->withQueryString();
+        $companies  = $companyQuery->paginate(20)->withQueryString();
         $categories = self::CATEGORIES;
 
         return view('empresas.index', compact('companies', 'categories'));
@@ -67,11 +68,14 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        $company->load(['agreements.department', 'contacts', 'workCenters']);
+        // Keep related data eager-loaded to avoid N+1 queries in the view
+        $company->load(['agreements.department', 'contacts.department', 'workCenters']);
         $categories = self::CATEGORIES;
-        $canEdit    = in_array(Auth::user()->role, self::CAN_WRITE);
+        $canEdit = in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true);
+        $departments = Department::where('is_active', true)->orderBy('name')->get();
+        $contactTypes = CompanyContactController::TYPES;
 
-        return view('empresas.show', compact('company', 'categories', 'canEdit'));
+        return view('empresas.show', compact('company', 'categories', 'canEdit', 'departments', 'contactTypes'));
     }
 
     // ─── Edit ────────────────────────────────────────────────────────────────
@@ -107,7 +111,7 @@ class CompanyController extends Controller
 
     private function authorizeWrite(): void
     {
-        abort_unless(in_array(Auth::user()->role, self::CAN_WRITE), 403);
+        abort_unless(in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true), 403);
     }
 
     private function validated(Request $request): array

@@ -148,30 +148,148 @@
     </div>
 
     {{-- Contactos --}}
-    @if ($company->contacts->isNotEmpty())
-    <div class="col-12">
+    <div class="col-12" id="contactos">
         <div class="card shadow-sm">
-            <div class="card-header fw-semibold">Contactos</div>
-            <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
-                    <thead class="table-light">
-                        <tr><th>Nombre</th><th>Cargo / Tipo</th><th>Telefono</th><th>Email</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($company->contacts as $contact)
-                        <tr>
-                            <td>{{ $contact->name }} {{ $contact->last_name_1 }}</td>
-                            <td><span class="badge text-bg-light border">{{ $contact->contact_type }}</span></td>
-                            <td class="small">{{ $contact->phone ?? '—' }}</td>
-                            <td class="small">{{ $contact->email ?? '—' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span class="fw-semibold">Contactos</span>
+                <span class="badge text-bg-light border">{{ $company->contacts->count() }}</span>
             </div>
+
+            @if ($canEdit)
+            <div class="card-body border-bottom bg-body-tertiary">
+                <h6 class="mb-3">Agregar contacto</h6>
+                <form method="POST" action="{{ route('empresas.contactos.store', $company) }}" class="row g-2">
+                    @csrf
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small">Nombre completo *</label>
+                        <input type="text" name="full_name" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label small">Tipo *</label>
+                        <select name="type" class="form-select form-select-sm" required>
+                            @foreach ($contactTypes as $key => $label)
+                                <option value="{{ $key }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label class="form-label small">Departamento</label>
+                        <select name="department_id" class="form-select form-select-sm">
+                            <option value="">Sin departamento</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label small">NIF</label>
+                        <input type="text" name="nif" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label small">Telefono 1</label>
+                        <input type="text" name="phone_1" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label small">Telefono 2</label>
+                        <input type="text" name="phone_2" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small">Email</label>
+                        <input type="email" name="email" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <label class="form-label small">Notas</label>
+                        <input type="text" name="notes" class="form-control form-control-sm" maxlength="1500">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-sm btn-primary">Agregar contacto</button>
+                    </div>
+                </form>
+            </div>
+            @endif
+
+            @if ($company->contacts->isNotEmpty())
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Departamento</th>
+                                <th>Telefonos</th>
+                                <th>Email</th>
+                                <th>Notas</th>
+                                @if ($canEdit)
+                                    <th style="width: 320px;">Acciones</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($company->contacts as $contact)
+                                <tr>
+                                    <td>{{ $contact->full_name }}</td>
+                                    <td><span class="badge text-bg-light border">{{ $contactTypes[$contact->type] ?? $contact->type }}</span></td>
+                                    <td>{{ $contact->department?->name ?? '—' }}</td>
+                                    <td class="small">
+                                        {{ $contact->phone_1 ?? '—' }}
+                                        @if ($contact->phone_2)
+                                            <br>{{ $contact->phone_2 }}
+                                        @endif
+                                    </td>
+                                    <td class="small">{{ $contact->email ?? '—' }}</td>
+                                    <td class="small">{{ $contact->notes ?? '—' }}</td>
+                                    @if ($canEdit)
+                                        <td>
+                                            <details>
+                                                <summary class="small">Editar</summary>
+                                                <form method="POST" action="{{ route('empresas.contactos.update', [$company, $contact]) }}" class="mt-2 d-grid gap-2">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="text" name="full_name" class="form-control form-control-sm" value="{{ $contact->full_name }}" required>
+                                                    <div class="row g-2">
+                                                        <div class="col-6">
+                                                            <select name="type" class="form-select form-select-sm" required>
+                                                                @foreach ($contactTypes as $key => $label)
+                                                                    <option value="{{ $key }}" {{ $contact->type === $key ? 'selected' : '' }}>{{ $label }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <select name="department_id" class="form-select form-select-sm">
+                                                                <option value="">Sin departamento</option>
+                                                                @foreach ($departments as $department)
+                                                                    <option value="{{ $department->id }}" {{ $contact->department_id === $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-2">
+                                                        <div class="col-6"><input type="text" name="nif" class="form-control form-control-sm" value="{{ $contact->nif }}" placeholder="NIF"></div>
+                                                        <div class="col-6"><input type="text" name="phone_1" class="form-control form-control-sm" value="{{ $contact->phone_1 }}" placeholder="Telefono 1"></div>
+                                                        <div class="col-6"><input type="text" name="phone_2" class="form-control form-control-sm" value="{{ $contact->phone_2 }}" placeholder="Telefono 2"></div>
+                                                        <div class="col-6"><input type="email" name="email" class="form-control form-control-sm" value="{{ $contact->email }}" placeholder="Email"></div>
+                                                    </div>
+                                                    <input type="text" name="notes" class="form-control form-control-sm" value="{{ $contact->notes }}" placeholder="Notas">
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary">Guardar</button>
+                                                </form>
+                                                <form method="POST" action="{{ route('empresas.contactos.destroy', [$company, $contact]) }}" class="mt-2" onsubmit="return confirm('¿Eliminar contacto?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                                </form>
+                                            </details>
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="card-body text-muted small">Sin contactos registrados.</div>
+            @endif
         </div>
     </div>
-    @endif
 
 </div>
 @endsection

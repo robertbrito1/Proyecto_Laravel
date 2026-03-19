@@ -33,7 +33,9 @@
     </div>
 @endif
 
-@php $badge = match($agreement->status) {
+@php
+    // Visual state color for agreement status badges
+    $statusBadgeClass = match($agreement->status) {
     'activo'          => 'success',
     'firmado_centro', 'firmado_empresa' => 'primary',
     'pendiente_firma' => 'warning',
@@ -41,11 +43,12 @@
     'finalizado'      => 'secondary',
     'renovacion'      => 'info',
     default           => 'light text-dark',
-}; @endphp
+    };
+@endphp
 
 <h5 class="fw-semibold mb-3">
     Convenio #{{ $agreement->id }}
-    <span class="badge text-bg-{{ $badge }} ms-2">{{ $statuses[$agreement->status] ?? $agreement->status }}</span>
+    <span class="badge text-bg-{{ $statusBadgeClass }} ms-2">{{ $statuses[$agreement->status] ?? $agreement->status }}</span>
 </h5>
 
 <div class="row g-3">

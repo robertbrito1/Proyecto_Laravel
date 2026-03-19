@@ -24,30 +24,31 @@ class AgreementController extends Controller
     ];
 
     /** Roles that can create/edit agreements */
-    private const CAN_WRITE = ['administrador', 'coordinadorFFE', 'secretaria', 'tutor', 'profesor'];
+    private const WRITE_ALLOWED_ROLES = ['administrador', 'coordinadorFFE', 'secretaria', 'tutor', 'profesor'];
 
     /** Roles that can sign (change to firmado_centro) */
-    private const CAN_SIGN = ['direccion', 'administrador'];
+    private const SIGN_ALLOWED_ROLES = ['direccion', 'administrador'];
 
     // ─── List ────────────────────────────────────────────────────────────────
 
     public function index(Request $request)
     {
-        $query = Agreement::with(['company', 'department', 'assignedTeacher'])
+        $agreementQuery = Agreement::with(['company', 'department', 'assignedTeacher'])
             ->latest();
 
+        // Optional list filters from query string
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $agreementQuery->where('status', $request->input('status'));
         }
         if ($request->filled('department_id')) {
-            $query->where('department_id', $request->department_id);
+            $agreementQuery->where('department_id', $request->input('department_id'));
         }
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('company', fn ($q) => $q->where('business_name', 'like', "%$search%"));
+            $searchTerm = $request->input('search');
+            $agreementQuery->whereHas('company', fn ($companyQuery) => $companyQuery->where('business_name', 'like', "%$searchTerm%"));
         }
 
-        $agreements  = $query->paginate(15)->withQueryString();
+        $agreements  = $agreementQuery->paginate(15)->withQueryString();
         $departments = Department::where('is_active', true)->orderBy('name')->get();
         $statuses    = self::STATUSES;
 
@@ -106,8 +107,8 @@ class AgreementController extends Controller
         ]);
 
         $statuses    = self::STATUSES;
-        $canSign     = in_array(Auth::user()->role, self::CAN_SIGN);
-        $canEdit     = in_array(Auth::user()->role, self::CAN_WRITE);
+        $canSign     = in_array(Auth::user()->role, self::SIGN_ALLOWED_ROLES, true);
+        $canEdit     = in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true);
 
         return view('convenios.show', compact('agreement', 'statuses', 'canSign', 'canEdit'));
     }
@@ -167,7 +168,7 @@ class AgreementController extends Controller
 
     public function sign(Agreement $agreement)
     {
-        abort_unless(in_array(Auth::user()->role, self::CAN_SIGN), 403);
+        abort_unless(in_array(Auth::user()->role, self::SIGN_ALLOWED_ROLES, true), 403);
 
         $agreement->update([
             'status'    => 'firmado_centro',
@@ -182,6 +183,7 @@ class AgreementController extends Controller
 
     private function authorizeWrite(): void
     {
-        abort_unless(in_array(Auth::user()->role, self::CAN_WRITE), 403);
+        // Keep write operations restricted by role
+        abort_unless(in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true), 403);
     }
 }

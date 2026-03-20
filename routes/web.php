@@ -4,6 +4,7 @@ use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyContactController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,8 +29,17 @@ Route::middleware('role:administrador')->group(function () {
     Route::view('/admin', 'admin.dashboard')->name('admin.dashboard');
     Route::redirect('/admin/convenios', '/convenios')->name('admin.convenios');
     Route::redirect('/admin/empresas', '/empresas')->name('admin.empresas');
-    Route::view('/admin/usuarios', 'admin.usuarios')->name('admin.usuarios');
     Route::view('/admin/informes', 'admin.informes')->name('admin.informes');
+
+    // ── CRUD de usuarios ──────────────────────────────────────────────────
+    Route::get('/admin/usuarios',                  [UserController::class, 'index'])->name('admin.usuarios.index');
+    Route::get('/admin/usuarios/nuevo',            [UserController::class, 'create'])->name('admin.usuarios.create');
+    Route::post('/admin/usuarios',                 [UserController::class, 'store'])->name('admin.usuarios.store');
+    Route::get('/admin/usuarios/{user}',           [UserController::class, 'show'])->name('admin.usuarios.show');
+    Route::get('/admin/usuarios/{user}/editar',    [UserController::class, 'edit'])->name('admin.usuarios.edit');
+    Route::put('/admin/usuarios/{user}',           [UserController::class, 'update'])->name('admin.usuarios.update');
+    Route::patch('/admin/usuarios/{user}/toggle',  [UserController::class, 'toggleActive'])->name('admin.usuarios.toggle');
+    Route::delete('/admin/usuarios/{user}',        [UserController::class, 'destroy'])->name('admin.usuarios.destroy');
 });
 
 // Vistas de coordinación orientadas a consulta y organización operativa.

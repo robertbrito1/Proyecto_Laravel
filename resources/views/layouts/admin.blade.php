@@ -59,7 +59,7 @@
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('empresas.*') ? 'active' : '' }}" href="{{ route('empresas.index') }}" {{ request()->routeIs('empresas.*') ? 'aria-current="page"' : '' }}>Empresas</a></li>
                 @endif
                 @if ($isAdmin)
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}" href="{{ route('admin.usuarios') }}" {{ request()->routeIs('admin.usuarios') ? 'aria-current="page"' : '' }}>Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.usuarios.*') ? 'active' : '' }}" href="{{ route('admin.usuarios.index') }}" {{ request()->routeIs('admin.usuarios.*') ? 'aria-current="page"' : '' }}>Usuarios</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.informes') ? 'active' : '' }}" href="{{ route('admin.informes') }}" {{ request()->routeIs('admin.informes') ? 'aria-current="page"' : '' }}>Informes</a></li>
                 @endif
                 @if ($isAdmin || $isCoordinadorFFE)

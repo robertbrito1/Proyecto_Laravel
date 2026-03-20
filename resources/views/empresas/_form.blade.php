@@ -76,7 +76,7 @@
             value="{{ old('email', $company?->email) }}" maxlength="255">
         @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
-
+    
     {{-- Domicilio social necesario para documentación y convenios oficiales. --}}
     <div class="col-12"><hr class="my-1"><h6 class="text-muted fw-semibold text-uppercase small mb-2">Domicilio social</h6></div>
 

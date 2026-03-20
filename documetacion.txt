@@ -1,0 +1,404 @@
+Visión General
+Este proyecto es una aplicación Laravel para gestionar FFE a través de tres bloques principales: usuarios con roles, empresas colaboradoras y convenios. La idea funcional es sencilla: un usuario inicia sesión, el sistema detecta su rol, le enseña el panel o módulo adecuado, y desde ahí puede consultar o mantener empresas, contactos y convenios.
+
+Los archivos más importantes para entenderlo en orden son bootstrap/app.php, routes/web.php, app/Http/Middleware/EnsureUserRole.php, app/Http/Controllers/AuthController.php, app/Http/Controllers/CompanyController.php, app/Http/Controllers/AgreementController.php y resources/views/layouts/admin.blade.php.
+
+Paso A Paso
+
+Laravel arranca en bootstrap/app.php. Ahí se registran las rutas web y se crea el alias del middleware role, que apunta a app/Http/Middleware/EnsureUserRole.php. Ese middleware es la base del control de acceso.
+
+La entrada real de la app está en routes/web.php. La ruta raíz redirige al login. Después las rutas se agrupan por función:
+administrador para usuarios e informes,
+coordinación para pantallas de consulta,
+empresas para el CRUD de empresas y contactos,
+convenios para el CRUD y firma de convenios.
+
+La autenticación vive en app/Http/Controllers/AuthController.php. Su flujo es:
+muestra login,
+valida email y password,
+exige que el usuario esté activo,
+inicia sesión,
+guarda el rol en sesión,
+redirige según rol.
+Ejemplo: administrador va al dashboard, dirección va a convenios pendientes de firma, profesor o tutor van a empresas contactadas.
+
+El control de permisos se aplica en app/Http/Middleware/EnsureUserRole.php. Si no hay usuario autenticado, manda al login. Si hay usuario pero su rol no está permitido en la ruta, devuelve 403. Eso evita meter lógica de permisos en cada vista.
+
+La base de datos se organiza alrededor de cuatro entidades principales:
+app/Models/User.php: usuario autenticable con rol, departamento y estado activo.
+app/Models/Department.php: departamento académico.
+app/Models/Company.php: empresa colaboradora.
+app/Models/Agreement.php: convenio entre centro y empresa.
+
+Tu archivo actual, app/Models/Department.php, es importante porque conecta usuarios y convenios. No es un modelo aislado: organiza tanto a las personas como a los acuerdos.
+
+Las migraciones cuentan el diseño del sistema:
+database/migrations/2026_03_18_000100_create_departments_table.php crea departamentos.
+database/migrations/2026_03_18_000110_add_role_and_department_to_users_table.php añade rol, teléfono y estado a usuarios.
+database/migrations/2026_03_18_000200_create_companies_table.php crea empresas.
+database/migrations/2026_03_18_000220_create_company_contacts_table.php crea contactos de empresa.
+database/migrations/2026_03_18_000300_create_agreements_table.php crea convenios.
+
+Leyéndolas entiendes qué campos existen de verdad y qué relaciones hay en SQL.
+
+El módulo de empresas está concentrado en app/Http/Controllers/CompanyController.php. Hace cinco cosas:
+lista empresas con filtros,
+crea nuevas empresas,
+muestra una ficha detallada,
+edita,
+elimina.
+
+Además, carga relaciones útiles como convenios, contactos y centros de trabajo. Los contactos se manejan aparte en app/Http/Controllers/CompanyContactController.php, lo cual está bien separado: la empresa es una entidad y su agenda de personas es otra.
+
+El módulo de convenios está en app/Http/Controllers/AgreementController.php. Su lógica es:
+listar convenios con filtros por estado, departamento y empresa,
+crear convenio,
+editar,
+ver detalle,
+eliminar,
+firmar por centro.
+
+El convenio enlaza empresa, departamento y profesor o tutor asignado. A nivel funcional, este es el núcleo del negocio.
+
+El módulo de usuarios está en app/Http/Controllers/UserController.php y solo es para administrador. Gestiona alta, edición, activación o desactivación y borrado. Aquí se definen también los roles del sistema:
+administrador,
+dirección,
+coordinador FFE,
+tutor,
+profesor,
+secretaría,
+empresa.
+
+La interfaz está hecha con Blade y Bootstrap. El layout común del panel es resources/views/layouts/admin.blade.php. Desde ahí se construye el menú según el rol del usuario. Ejemplos de vistas reales:
+resources/views/auth/login.blade.php,
+resources/views/empresas/index.blade.php,
+resources/views/convenios/index.blade.php,
+resources/views/admin/dashboard.blade.php.
+
+Cómo Leerlo Sin Perderte
+Si quieres entenderlo de verdad, léelo en este orden:
+
+routes/web.php
+app/Http/Controllers/AuthController.php
+app/Http/Middleware/EnsureUserRole.php
+app/Http/Controllers/CompanyController.php
+app/Http/Controllers/AgreementController.php
+app/Models/Company.php, app/Models/Agreement.php, app/Models/Department.php, app/Models/User.php
+Migraciones en database/migrations
+Vistas en resources/views
+Detalle Importante
+Hay una inconsistencia real entre los estados definidos en el controlador de convenios y los estados definidos en la migración de convenios. El controlador usa etiquetas como pendiente_firma, firmado_centro y activo, mientras que la migración define otros valores distintos. Eso sugiere que el proyecto está funcionalmente encaminado, pero aún no está totalmente alineado entre lógica y base de datos.
+
+Mapa Visual De Relaciones
+
+Puedes imaginar el proyecto como este grafo simplificado:
+
+USERS
+- id
+- department_id
+- role
+- is_active
+
+DEPARTMENTS
+- id
+- name
+- code
+
+COMPANIES
+- id
+- business_name
+- category
+
+COMPANY_CONTACTS
+- id
+- company_id
+- department_id
+- type
+
+AGREEMENTS
+- id
+- company_id
+- department_id
+- assigned_teacher_id
+- ies_tutor_user_id
+- created_by_user_id
+- status
+
+Relaciones principales:
+
+Department 1 ---- N User
+Department 1 ---- N Agreement
+Department 1 ---- N CompanyContact
+
+Company 1 ---- N CompanyContact
+Company 1 ---- N Agreement
+
+User 1 ---- N Agreement como created_by_user_id
+User 1 ---- N Agreement como assigned_teacher_id
+User 1 ---- N Agreement como ies_tutor_user_id
+
+User N ---- N Company mediante tabla pivote company_user
+
+Lectura funcional del mapa:
+
+Un departamento organiza usuarios, convenios y algunos contactos.
+Una empresa puede tener muchos contactos y muchos convenios.
+Un convenio pertenece a una sola empresa y normalmente a un solo departamento.
+Un convenio puede tener varios usuarios relacionados, pero con papeles distintos: creador, profesor asignado y tutor del IES.
+
+Si lo piensas en lenguaje de negocio, el convenio es la pieza que une empresa, centro, departamento y responsables académicos.
+
+Flujo Completo Del Módulo De Empresas
+
+Este es el recorrido normal desde que un usuario entra al módulo hasta que Laravel guarda la empresa en base de datos.
+
+1. Entrada por ruta
+El usuario entra a /empresas o /empresas/nueva.
+Las rutas están en routes/web.php y pasan por el middleware role.
+Eso significa que primero se comprueba que haya sesión activa.
+
+2. Validación de permisos
+Aunque la ruta general de empresas está dentro del middleware role, el controlador añade una segunda capa.
+En app/Http/Controllers/CompanyController.php el método authorizeWrite() solo permite escribir a:
+administrador,
+coordinadorFFE,
+secretaria.
+
+Esto significa que no todos los usuarios autenticados pueden crear o editar empresas.
+Algunos podrán ver listados o fichas, pero no modificar datos.
+
+3. Listado de empresas
+Cuando se visita /empresas, Laravel ejecuta CompanyController::index().
+Ese método:
+crea una consulta sobre Company,
+carga el contador de convenios con withCount('agreements'),
+aplica filtros por texto y categoría,
+pagina resultados,
+envía los datos a la vista empresas.index.
+
+En otras palabras, el listado no trae solo empresas, también trae información resumida para pintar la tabla con algo útil.
+
+4. Formulario de alta
+Cuando se visita /empresas/nueva, Laravel ejecuta CompanyController::create().
+Ese método no guarda nada todavía.
+Solo prepara catálogos, en este caso las categorías, y devuelve la vista del formulario.
+
+5. Envío del formulario
+Cuando el usuario pulsa guardar, el navegador envía un POST a /empresas.
+La ruta llama a CompanyController::store().
+Ese método hace tres cosas importantes:
+verifica permisos de escritura,
+valida los datos recibidos,
+crea el registro con Company::create($data).
+
+La validación controla campos como:
+business_name,
+tax_id,
+activity,
+category,
+teléfonos,
+email,
+representante,
+notas.
+
+6. Escritura en base de datos
+El modelo app/Models/Company.php define qué campos son fillable.
+Eso permite que Eloquent inserte solo los atributos autorizados.
+La información acaba en la tabla companies, creada por la migración 2026_03_18_000200_create_companies_table.php.
+
+7. Redirección a la ficha
+Después de guardar, store() redirige a la ruta empresas.show.
+Eso lleva a CompanyController::show().
+
+8. Carga de la ficha completa
+En show(), el controlador hace load() de relaciones para evitar consultas repetidas:
+agreements.department,
+contacts.department,
+workCenters.
+
+Además calcula:
+canEdit,
+departments activos,
+tipos de contacto.
+
+Eso significa que la ficha de empresa no es solo un detalle básico, sino un punto central desde el que ves la empresa y parte de su ecosistema.
+
+9. Gestión de contactos de empresa
+Dentro de esa ficha, los contactos se manejan con otro controlador: CompanyContactController.
+Las rutas son:
+POST /empresas/{company}/contactos,
+PUT /empresas/{company}/contactos/{contact},
+DELETE /empresas/{company}/contactos/{contact}.
+
+Ese controlador valida que:
+el usuario tenga rol autorizado,
+el contacto pertenezca realmente a esa empresa,
+los datos tengan formato correcto.
+
+Así se evita, por ejemplo, editar por URL un contacto que pertenezca a otra empresa.
+
+10. Edición y borrado
+La edición reutiliza el mismo patrón:
+edit() muestra formulario,
+update() valida y actualiza,
+destroy() elimina.
+
+El borrado es más restrictivo: solo el administrador puede eliminar empresas.
+
+Resumen mental del módulo de empresas:
+
+Ruta -> Middleware -> CompanyController -> Validación -> Modelo Company -> Tabla companies -> Vista Blade
+
+Y si estás en la ficha:
+
+Empresa -> Contactos -> Convenios -> Centros de trabajo
+
+Flujo Completo Del Módulo De Convenios
+
+Este módulo es el más importante del proyecto porque representa el proceso real de relación entre el centro y la empresa.
+
+1. Entrada por rutas de convenios
+Las rutas principales son:
+GET /convenios,
+GET /convenios/nuevo,
+POST /convenios,
+GET /convenios/{agreement},
+GET /convenios/{agreement}/editar,
+PUT /convenios/{agreement},
+DELETE /convenios/{agreement},
+POST /convenios/{agreement}/firmar.
+
+Todas pasan por el middleware role, así que requieren usuario autenticado.
+
+2. Permisos por operación
+Dentro de app/Http/Controllers/AgreementController.php hay dos grupos de permisos:
+WRITE_ALLOWED_ROLES para crear y editar,
+SIGN_ALLOWED_ROLES para firmar por parte del centro.
+
+Es decir:
+administrador, coordinadorFFE, secretaria, tutor y profesor pueden trabajar convenios,
+dirección y administrador pueden firmarlos.
+
+3. Listado de convenios
+AgreementController::index() construye una consulta con relaciones:
+company,
+department,
+assignedTeacher.
+
+Luego aplica filtros opcionales por:
+status,
+department_id,
+search por nombre de empresa.
+
+Finalmente pagina resultados y devuelve la vista convenios.index.
+
+Este listado está pensado para trabajo operativo: localizar convenios por estado o por departamento sin entrar en todos uno a uno.
+
+4. Alta de convenio
+Cuando el usuario entra a /convenios/nuevo, se ejecuta create().
+Ese método carga catálogos para el formulario:
+empresas,
+departamentos activos,
+usuarios con rol tutor o profesor,
+lista de estados.
+
+Aquí se ve una decisión de diseño clara: el convenio depende de otras tablas ya existentes. No se puede crear aislado.
+
+5. Guardado del convenio
+Cuando se envía el formulario, store() valida:
+company_id,
+department_id,
+assigned_teacher_id,
+ies_tutor_user_id,
+datos de contacto de gestión,
+status,
+notes.
+
+Después añade created_by_user_id con el id del usuario autenticado.
+Eso sirve para trazabilidad: queda registrado quién creó el convenio.
+
+6. Persistencia en base de datos
+El modelo app/Models/Agreement.php define los campos fillable y las relaciones.
+La tabla agreements guarda las claves foráneas hacia empresa, departamento y usuarios responsables.
+
+En términos de negocio, aquí se materializa el vínculo oficial entre empresa y centro.
+
+7. Vista de detalle
+Cuando se abre un convenio concreto, show() carga:
+company,
+department,
+assignedTeacher,
+iesTutor,
+companyTutors,
+documents.
+
+Además calcula dos banderas para la interfaz:
+canSign,
+canEdit.
+
+Eso permite que la vista decida qué botones mostrar sin reimplementar toda la lógica de permisos en Blade.
+
+8. Edición del convenio
+La edición sigue el patrón Laravel clásico:
+edit() carga formulario con datos actuales y catálogos,
+update() vuelve a validar y guarda cambios.
+
+La diferencia respecto al alta es que ya existe un registro y se actualiza en vez de crearse.
+
+9. Firma del convenio
+La operación especial del módulo es sign().
+Solo la puede ejecutar dirección o administrador.
+Cuando se firma, el controlador actualiza:
+status,
+signed_at.
+
+Eso transforma el convenio dentro del flujo de negocio, no es una simple edición de texto.
+
+10. Eliminación
+destroy() permite borrar convenios solo a administrador y coordinadorFFE.
+Es una restricción razonable porque eliminar un convenio es una operación sensible.
+
+Resumen mental del módulo de convenios:
+
+Ruta -> Middleware -> AgreementController -> Validación -> Modelo Agreement -> Tabla agreements -> Vista Blade
+
+Pero el módulo realmente conecta más piezas:
+
+Agreement
+-> pertenece a Company
+-> pertenece a Department
+-> pertenece a User como profesor asignado
+-> pertenece a User como tutor IES
+-> pertenece a User como creador
+-> tiene muchos documentos
+-> tiene muchos tutores de empresa
+
+Cómo Pensarlo Como Sistema Completo
+
+Si juntas los dos módulos grandes, el proyecto funciona así:
+
+Primero existen usuarios con rol y departamentos.
+Después se registran empresas y sus contactos.
+Luego se crean convenios que enlazan empresa, departamento y responsables académicos.
+Por último, ciertos roles revisan, actualizan o firman esos convenios.
+
+Ese orden importa. El proyecto no está pensado como páginas sueltas, sino como un flujo administrativo:
+
+Usuarios y departamentos
+-> permiten organizar permisos y responsables
+
+Empresas
+-> representan entidades externas con las que el centro trabaja
+
+Convenios
+-> formalizan la relación entre el centro y esas empresas
+
+Dirección
+-> interviene en la fase de firma o validación final
+
+Si quieres estudiar este proyecto con criterio, piensa siempre en estas dos preguntas:
+
+Qué entidad se está gestionando aquí.
+Qué rol tiene permiso para verla o modificarla.
+
+Con esas dos preguntas casi todo el proyecto se vuelve legible.

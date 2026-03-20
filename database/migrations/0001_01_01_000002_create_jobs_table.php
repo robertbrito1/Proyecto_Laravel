@@ -4,10 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Migración base que crea las tablas para colas y trabajos en segundo plano.
+
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+    * Ejecuta la creación de la infraestructura de colas.
      */
     public function up(): void
     {
@@ -46,7 +48,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+        * Revierte la creación de las tablas relacionadas con colas.
      */
     public function down(): void
     {

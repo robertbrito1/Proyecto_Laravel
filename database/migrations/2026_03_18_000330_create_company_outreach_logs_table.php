@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla de trazabilidad para llamadas y contactos realizados a empresas.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de histórico de contactos con empresas.
+     */
     public function up(): void
     {
         Schema::create('company_outreach_logs', function (Blueprint $table) {

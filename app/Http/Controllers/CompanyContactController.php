@@ -7,8 +7,12 @@ use App\Models\CompanyContact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controlador que administra los contactos asociados a cada empresa.
+ */
 class CompanyContactController extends Controller
 {
+    /** Tipos de contacto disponibles para clasificar cada persona vinculada a la empresa. */
     public const TYPES = [
         'principal'      => 'Principal',
         'familia'        => 'Familia profesional',
@@ -16,6 +20,7 @@ class CompanyContactController extends Controller
         'tutor_empresa'  => 'Tutor de empresa',
     ];
 
+    /** Roles con permiso para modificar la agenda de contactos. */
     private const WRITE_ALLOWED_ROLES = ['administrador', 'coordinadorFFE', 'secretaria'];
 
     public function store(Request $request, Company $company)
@@ -34,7 +39,7 @@ class CompanyContactController extends Controller
     public function update(Request $request, Company $company, CompanyContact $contact)
     {
         $this->authorizeWrite();
-        // Prevent editing contacts that belong to another company
+        // Impide modificar contactos que pertenecen a otra empresa.
         abort_unless($contact->company_id === $company->id, 404);
 
         $contact->update($this->validated($request));
@@ -46,7 +51,7 @@ class CompanyContactController extends Controller
     public function destroy(Company $company, CompanyContact $contact)
     {
         $this->authorizeWrite();
-        // Prevent deleting contacts that belong to another company
+        // Impide eliminar contactos que pertenecen a otra empresa.
         abort_unless($contact->company_id === $company->id, 404);
 
         $contact->delete();

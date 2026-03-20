@@ -7,8 +7,15 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controlador encargado del alta, consulta y mantenimiento de empresas.
+ *
+ * Reúne la lógica del módulo de empresas: listado con filtros, ficha completa,
+ * formularios de edición y validación de los datos administrativos básicos.
+ */
 class CompanyController extends Controller
 {
+    /** Categorías usadas para clasificar empresas según su relación con el centro. */
     public const CATEGORIES = [
         'ayuntamiento'      => 'Ayuntamiento',
         'colegio_instituto' => 'Colegio / Instituto',
@@ -17,14 +24,19 @@ class CompanyController extends Controller
         'regular'           => 'Empresa (regular)',
     ];
 
+    /** Roles con permiso para crear, editar o borrar información de empresas. */
     private const WRITE_ALLOWED_ROLES = ['administrador', 'coordinadorFFE', 'secretaria'];
 
-    // ─── List ────────────────────────────────────────────────────────────────
+    // ─── Listado ─────────────────────────────────────────────────────────────
 
+    /**
+     * Construye el listado paginado de empresas y aplica filtros por texto y categoría.
+     */
     public function index(Request $request)
     {
         $companyQuery = Company::withCount('agreements')->latest();
 
+        // El buscador revisa nombre, identificador fiscal y actividad principal.
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $companyQuery->where(function ($searchQuery) use ($searchTerm) {
@@ -34,6 +46,7 @@ class CompanyController extends Controller
             });
         }
 
+        // El filtro de categoría permite separar empresas por calidad o tipología.
         if ($request->filled('category')) {
             $companyQuery->where('category', $request->input('category'));
         }
@@ -44,8 +57,11 @@ class CompanyController extends Controller
         return view('empresas.index', compact('companies', 'categories'));
     }
 
-    // ─── Create ──────────────────────────────────────────────────────────────
+    // ─── Crear ───────────────────────────────────────────────────────────────
 
+    /**
+     * Prepara los catálogos necesarios para dar de alta una nueva empresa.
+     */
     public function create()
     {
         $this->authorizeWrite();
@@ -53,6 +69,9 @@ class CompanyController extends Controller
         return view('empresas.create', compact('categories'));
     }
 
+    /**
+     * Valida y registra una empresa nueva en la base de datos.
+     */
     public function store(Request $request)
     {
         $this->authorizeWrite();
@@ -64,11 +83,14 @@ class CompanyController extends Controller
             ->with('success', 'Empresa registrada correctamente.');
     }
 
-    // ─── Show ────────────────────────────────────────────────────────────────
+    // ─── Ver detalle ─────────────────────────────────────────────────────────
 
+    /**
+     * Muestra la ficha completa de una empresa junto con sus relaciones más usadas.
+     */
     public function show(Company $company)
     {
-        // Keep related data eager-loaded to avoid N+1 queries in the view
+        // Precarga relaciones para evitar consultas repetidas al pintar la vista.
         $company->load(['agreements.department', 'contacts.department', 'workCenters']);
         $categories = self::CATEGORIES;
         $canEdit = in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true);
@@ -78,8 +100,11 @@ class CompanyController extends Controller
         return view('empresas.show', compact('company', 'categories', 'canEdit', 'departments', 'contactTypes'));
     }
 
-    // ─── Edit ────────────────────────────────────────────────────────────────
+    // ─── Editar ──────────────────────────────────────────────────────────────
 
+    /**
+     * Carga el formulario de edición con los datos actuales de la empresa.
+     */
     public function edit(Company $company)
     {
         $this->authorizeWrite();
@@ -87,6 +112,9 @@ class CompanyController extends Controller
         return view('empresas.edit', compact('company', 'categories'));
     }
 
+    /**
+     * Actualiza la ficha de empresa reutilizando las mismas reglas del alta.
+     */
     public function update(Request $request, Company $company)
     {
         $this->authorizeWrite();
@@ -96,8 +124,11 @@ class CompanyController extends Controller
             ->with('success', 'Empresa actualizada correctamente.');
     }
 
-    // ─── Delete ──────────────────────────────────────────────────────────────
+    // ─── Eliminar ────────────────────────────────────────────────────────────
 
+    /**
+     * Elimina una empresa. Esta acción queda reservada al administrador.
+     */
     public function destroy(Company $company)
     {
         abort_unless(Auth::user()->role === 'administrador', 403);
@@ -107,13 +138,19 @@ class CompanyController extends Controller
             ->with('success', 'Empresa eliminada.');
     }
 
-    // ─── Helpers ─────────────────────────────────────────────────────────────
+    // ─── Soporte interno ─────────────────────────────────────────────────────
 
+    /**
+     * Verifica que el rol actual puede modificar el módulo de empresas.
+     */
     private function authorizeWrite(): void
     {
         abort_unless(in_array(Auth::user()->role, self::WRITE_ALLOWED_ROLES, true), 403);
     }
 
+    /**
+     * Reúne las reglas de validación compartidas entre creación y edición.
+     */
     private function validated(Request $request): array
     {
         return $request->validate([

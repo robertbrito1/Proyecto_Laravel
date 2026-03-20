@@ -1,3 +1,4 @@
+{{-- Listado de empresas con filtros básicos y acceso a operaciones CRUD. --}}
 @extends('layouts.admin')
 
 @section('title', 'Empresas')

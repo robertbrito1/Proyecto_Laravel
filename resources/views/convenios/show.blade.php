@@ -1,3 +1,4 @@
+{{-- Vista de detalle de un convenio con acciones según permisos y estado. --}}
 @extends('layouts.admin')
 
 @section('title', 'Convenio #' . $agreement->id)

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Modelo que representa un convenio firmado o en trámite con una empresa.
+ */
 class Agreement extends Model
 {
     use HasFactory;

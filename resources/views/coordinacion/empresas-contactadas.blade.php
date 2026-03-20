@@ -1,3 +1,4 @@
+{{-- Pantalla de coordinación para evitar duplicados en el contacto con empresas. --}}
 @extends('layouts.admin')
 
 @section('title', 'Coordinacion FFE - Empresas contactadas')

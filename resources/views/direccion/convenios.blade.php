@@ -1,3 +1,4 @@
+{{-- Vista de dirección orientada a la firma de convenios pendientes. --}}
 @php
     return redirect()->route('convenios.index', ['status' => 'pendiente_firma']);
 @endphp

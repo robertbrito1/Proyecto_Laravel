@@ -1,3 +1,4 @@
+{{-- Vista de detalle de empresa con contactos, convenios y acciones disponibles. --}}
 @extends('layouts.admin')
 
 @section('title', $company->business_name)

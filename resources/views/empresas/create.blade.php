@@ -1,3 +1,4 @@
+{{-- Vista para registrar una nueva empresa con el formulario compartido. --}}
 @extends('layouts.admin')
 
 @section('title', 'Nueva empresa')

@@ -1,3 +1,4 @@
+{{-- Pantalla de coordinación para consultar departamentos y responsables. --}}
 @extends('layouts.admin')
 
 @section('title', 'Coordinacion FFE - Departamentos')

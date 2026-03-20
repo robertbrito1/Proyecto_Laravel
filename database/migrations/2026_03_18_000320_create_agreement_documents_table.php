@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla donde se registran documentos y adjuntos de cada convenio.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de documentos de convenio.
+     */
     public function up(): void
     {
         Schema::create('agreement_documents', function (Blueprint $table) {

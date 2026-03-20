@@ -1,3 +1,4 @@
+{{-- Pantalla de coordinación para revisar la clasificación de las empresas. --}}
 @extends('layouts.admin')
 
 @section('title', 'Coordinacion FFE - Categorias de empresas')

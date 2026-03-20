@@ -1,3 +1,4 @@
+{{-- Pantalla genérica de inicio para perfiles sin panel específico desarrollado. --}}
 @extends('layouts.admin')
 
 @section('title', 'Panel')

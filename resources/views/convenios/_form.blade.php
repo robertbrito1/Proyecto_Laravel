@@ -1,6 +1,10 @@
-{{-- Partial reutilizable para create y edit --}}
+{{--
+    Formulario reutilizable para crear y editar convenios.
+    Recoge la empresa implicada, el departamento responsable, el estado y los contactos de seguimiento.
+--}}
 
 @if ($errors->any())
+    {{-- Resume los errores de validación para que el usuario los detecte antes de reenviar el formulario. --}}
     <div class="alert alert-danger">
         <ul class="mb-0 ps-3">
             @foreach ($errors->all() as $error)
@@ -11,7 +15,7 @@
 @endif
 
 <div class="row g-3">
-    {{-- Empresa --}}
+    {{-- Empresa con la que se firma o tramita el convenio. --}}
     <div class="col-12">
         <label for="company_id" class="form-label fw-semibold">Empresa <span class="text-danger" aria-hidden="true">*</span></label>
         <select id="company_id" name="company_id" class="form-select @error('company_id') is-invalid @enderror" required aria-required="true">
@@ -26,7 +30,7 @@
         @error('company_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Departamento --}}
+    {{-- Departamento académico que asume el seguimiento del convenio. --}}
     <div class="col-12 col-md-6">
         <label for="department_id" class="form-label fw-semibold">Departamento <span class="text-danger" aria-hidden="true">*</span></label>
         <select id="department_id" name="department_id" class="form-select @error('department_id') is-invalid @enderror" required aria-required="true">
@@ -41,7 +45,7 @@
         @error('department_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Estado --}}
+    {{-- Estado administrativo actual del convenio dentro del flujo interno. --}}
     <div class="col-12 col-md-6">
         <label for="status" class="form-label fw-semibold">Estado <span class="text-danger" aria-hidden="true">*</span></label>
         <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required aria-required="true">
@@ -55,7 +59,7 @@
         @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Profesor / Tutor asignado --}}
+    {{-- Profesor o tutor responsable del seguimiento académico o coordinativo. --}}
     <div class="col-12 col-md-6">
         <label for="assigned_teacher_id" class="form-label">Profesor / Tutor asignado</label>
         <select id="assigned_teacher_id" name="assigned_teacher_id" class="form-select @error('assigned_teacher_id') is-invalid @enderror">
@@ -70,7 +74,7 @@
         @error('assigned_teacher_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Tutor IES --}}
+    {{-- Tutor interno del centro cuando se quiera distinguir del profesor asignado. --}}
     <div class="col-12 col-md-6">
         <label for="ies_tutor_user_id" class="form-label">Tutor IES</label>
         <select id="ies_tutor_user_id" name="ies_tutor_user_id" class="form-select @error('ies_tutor_user_id') is-invalid @enderror">
@@ -85,7 +89,7 @@
         @error('ies_tutor_user_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Contacto de gestión --}}
+    {{-- Persona de referencia para resolver trámites y comunicaciones del convenio. --}}
     <div class="col-12"><hr class="my-1"><p class="text-muted small mb-1">Persona de contacto (gestión del convenio)</p></div>
 
     <div class="col-12 col-md-4">
@@ -109,7 +113,7 @@
         @error('management_contact_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Notas --}}
+    {{-- Observaciones internas útiles para incidencias, acuerdos o recordatorios. --}}
     <div class="col-12">
         <label for="notes" class="form-label">Notas internas</label>
         <textarea id="notes" name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3" maxlength="2000">{{ old('notes', $agreement?->notes) }}</textarea>

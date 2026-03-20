@@ -1,3 +1,4 @@
+{{-- Pantalla pública de bienvenida generada por Laravel y mantenida como referencia base. --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

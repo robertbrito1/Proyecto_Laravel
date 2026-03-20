@@ -8,12 +8,16 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Seeder principal que carga departamentos y usuarios básicos para arrancar el proyecto.
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
     public function run(): void
     {
+        // Crea o reutiliza los departamentos base usados por los perfiles de ejemplo.
         $informatica = Department::updateOrCreate(
             ['name' => 'Informatica'],
             ['code' => 'INF', 'is_active' => true],
@@ -24,6 +28,7 @@ class DatabaseSeeder extends Seeder
             ['code' => 'SAN', 'is_active' => true],
         );
 
+        // Define un conjunto mínimo de usuarios para probar cada rol de la aplicación.
         $users = [
             [
                 'name' => 'Admin FFE',
@@ -77,6 +82,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($users as $data) {
+            // Inserta cada usuario de prueba sin duplicar registros si ya existían.
             User::updateOrCreate(
                 ['email' => $data['email']],
                 [

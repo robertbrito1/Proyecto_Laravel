@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Modelo de usuario autenticable con el rol y departamento usados por el panel.
+ */
 #[Fillable(['department_id', 'role', 'name', 'email', 'phone', 'password', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -21,7 +24,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
+     * Define las conversiones automáticas aplicadas a ciertos atributos.
      *
      * @return array<string, string>
      */

@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla de departamentos académicos usada para organizar usuarios y convenios.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de departamentos.
+     */
     public function up(): void
     {
         Schema::create('departments', function (Blueprint $table) {

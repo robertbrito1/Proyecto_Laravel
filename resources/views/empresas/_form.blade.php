@@ -1,6 +1,10 @@
-{{-- Partial form reutilizable para create y edit de empresa --}}
+{{--
+    Formulario reutilizable para crear y editar empresas.
+    Agrupa información fiscal, teléfonos, domicilio social y representante legal.
+--}}
 
 @if ($errors->any())
+    {{-- Muestra un resumen superior cuando la validación del backend devuelve errores. --}}
     <div class="alert alert-danger">
         <ul class="mb-0 ps-3">
             @foreach ($errors->all() as $error)
@@ -12,7 +16,7 @@
 
 <div class="row g-3">
 
-    {{-- Datos principales --}}
+    {{-- Datos principales usados para identificar y clasificar la empresa. --}}
     <div class="col-12">
         <h6 class="text-muted fw-semibold text-uppercase small mb-2">Datos de la empresa</h6>
     </div>
@@ -49,7 +53,7 @@
         @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Contacto --}}
+    {{-- Canales de contacto generales para llamadas, seguimiento y correo electrónico. --}}
     <div class="col-12"><hr class="my-1"><h6 class="text-muted fw-semibold text-uppercase small mb-2">Contacto</h6></div>
 
     <div class="col-12 col-md-4">
@@ -73,7 +77,7 @@
         @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Domicilio social --}}
+    {{-- Domicilio social necesario para documentación y convenios oficiales. --}}
     <div class="col-12"><hr class="my-1"><h6 class="text-muted fw-semibold text-uppercase small mb-2">Domicilio social</h6></div>
 
     <div class="col-12 col-md-6">
@@ -104,7 +108,7 @@
         @error('social_province')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Representante legal --}}
+    {{-- Persona representante que firma o responde legalmente por la empresa. --}}
     <div class="col-12"><hr class="my-1"><h6 class="text-muted fw-semibold text-uppercase small mb-2">Representante legal</h6></div>
 
     <div class="col-12 col-md-3">
@@ -135,7 +139,7 @@
         @error('representative_last_name_2')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>
 
-    {{-- Notas --}}
+    {{-- Campo libre para observaciones internas no visibles fuera del panel. --}}
     <div class="col-12">
         <label for="notes" class="form-label">Notas internas</label>
         <textarea id="notes" name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3" maxlength="2000">{{ old('notes', $company?->notes) }}</textarea>

@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla de centros de trabajo vinculados a cada empresa.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de centros de trabajo de empresa.
+     */
     public function up(): void
     {
         Schema::create('company_work_centers', function (Blueprint $table) {

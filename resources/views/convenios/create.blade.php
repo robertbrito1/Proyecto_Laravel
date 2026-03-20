@@ -1,3 +1,4 @@
+{{-- Vista para registrar un nuevo convenio usando el formulario reutilizable. --}}
 @extends('layouts.admin')
 
 @section('title', 'Nuevo convenio')

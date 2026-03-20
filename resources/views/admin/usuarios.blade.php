@@ -1,3 +1,4 @@
+{{-- Vista informativa del administrador orientada a la futura gestión de usuarios. --}}
 @extends('layouts.admin')
 
 @section('title', 'Usuarios')

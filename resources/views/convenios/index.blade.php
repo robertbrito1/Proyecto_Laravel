@@ -1,3 +1,4 @@
+{{-- Listado filtrable de convenios con acceso a alta, edición y consulta. --}}
 @extends('layouts.admin')
 
 @section('title', 'Convenios')

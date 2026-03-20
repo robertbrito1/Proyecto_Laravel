@@ -1,3 +1,4 @@
+{{-- Panel principal del administrador con accesos rápidos y resumen del área. --}}
 @extends('layouts.admin')
 
 @section('title', 'Panel Administrador')

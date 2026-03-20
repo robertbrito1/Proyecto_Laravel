@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla principal de empresas colaboradoras y su información legal y de contacto.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de empresas.
+     */
     public function up(): void
     {
         Schema::create('companies', function (Blueprint $table) {

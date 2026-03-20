@@ -1,3 +1,4 @@
+{{-- Pantalla de coordinación destinada a informes y futuras exportaciones. --}}
 @extends('layouts.admin')
 
 @section('title', 'Coordinacion FFE - Informes')

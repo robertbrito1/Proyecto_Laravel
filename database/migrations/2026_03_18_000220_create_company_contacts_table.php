@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla de contactos de empresa para registrar responsables y personas de referencia.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla de contactos de empresa.
+     */
     public function up(): void
     {
         Schema::create('company_contacts', function (Blueprint $table) {

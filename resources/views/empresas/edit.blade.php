@@ -1,3 +1,4 @@
+{{-- Vista para editar una empresa ya registrada en el sistema. --}}
 @extends('layouts.admin')
 
 @section('title', 'Editar empresa')

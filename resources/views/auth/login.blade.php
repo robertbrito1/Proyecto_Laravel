@@ -1,3 +1,4 @@
+{{-- Pantalla de acceso para autenticar usuarios en el panel. --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>

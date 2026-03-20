@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Modelo que guarda el histórico de llamadas o gestiones de contacto con empresas.
+ */
 class CompanyOutreachLog extends Model
 {
     use HasFactory;

@@ -1,3 +1,7 @@
+{{--
+    Layout principal del panel autenticado.
+    Resuelve la navegación superior, el acceso rápido a la portada del rol y el contenedor común del contenido.
+--}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -9,6 +13,7 @@
 <body class="bg-body-tertiary">
 <a href="#main-content" class="visually-hidden-focusable btn btn-primary btn-sm position-absolute top-0 start-0 m-2 z-3">Saltar al contenido</a>
 @php
+    // Calcula el rol actual y prepara la ruta de inicio más adecuada para ese perfil.
     $currentRole = auth()->user()?->role ?? session('role', 'invitado');
     $isAdmin = $currentRole === 'administrador';
     $isDireccion = $currentRole === 'direccion';
@@ -26,6 +31,7 @@
     $currentRoleLabel = $roleLabels[$currentRole] ?? ucfirst($currentRole);
     $homeRoute = route('login');
 
+    // Cada perfil vuelve desde la marca principal a su módulo más usado.
     if ($isAdmin) {
         $homeRoute = route('admin.dashboard');
     } elseif ($isDireccion) {
@@ -47,7 +53,7 @@
                 @if ($isAdmin)
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}" {{ request()->routeIs('admin.dashboard') ? 'aria-current="page"' : '' }}>Inicio</a></li>
                 @endif
-                {{-- Convenios y Empresas: visibles para todos --}}
+                {{-- Convenios es el módulo común; empresas queda visible solo para roles de gestión. --}}
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('convenios.*') ? 'active' : '' }}" href="{{ route('convenios.index') }}" {{ request()->routeIs('convenios.*') ? 'aria-current="page"' : '' }}>Convenios</a></li>
                 @if (in_array($currentRole, ['administrador','coordinadorFFE','secretaria']))
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('empresas.*') ? 'active' : '' }}" href="{{ route('empresas.index') }}" {{ request()->routeIs('empresas.*') ? 'aria-current="page"' : '' }}>Empresas</a></li>

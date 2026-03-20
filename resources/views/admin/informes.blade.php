@@ -1,3 +1,4 @@
+{{-- Vista informativa del administrador para consultas y exportación de informes. --}}
 @extends('layouts.admin')
 
 @section('title', 'Informes')

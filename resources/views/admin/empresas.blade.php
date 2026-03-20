@@ -1,3 +1,4 @@
+{{-- Vista informativa del área de administración para la gestión de empresas. --}}
 @extends('layouts.admin')
 
 @section('title', 'Empresas')

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Modelo que representa centros de trabajo o sedes asociados a una empresa.
+ */
 class CompanyWorkCenter extends Model
 {
     use HasFactory;

@@ -4,8 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+// Crea la tabla de convenios con estado, responsables y datos de seguimiento.
+
 return new class extends Migration
 {
+    /**
+     * Crea la tabla principal de convenios.
+     */
     public function up(): void
     {
         Schema::create('agreements', function (Blueprint $table) {

@@ -1,3 +1,4 @@
+{{-- Vista para editar un convenio existente y reutilizar el formulario principal. --}}
 @extends('layouts.admin')
 
 @section('title', 'Editar convenio')

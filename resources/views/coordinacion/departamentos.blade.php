@@ -14,11 +14,22 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        </div>
+    @endif
+
     <div class="col-12 col-xl-8">
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h2 class="h6 mb-0">Departamentos asignados</h2>
-                <button class="btn btn-sm btn-primary" type="button">Asignar departamento</button>
+                <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalNuevoDepartamento">
+                    Asignar departamento
+                </button>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover mb-0 align-middle">
@@ -31,24 +42,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Informatica</td>
-                            <td>Lucia Martin</td>
-                            <td class="d-none d-md-table-cell">4</td>
-                            <td><span class="badge bg-success-subtle text-success-emphasis">Activo</span></td>
-                        </tr>
-                        <tr>
-                            <td>Sanidad</td>
-                            <td>Rafael Perez</td>
-                            <td class="d-none d-md-table-cell">3</td>
-                            <td><span class="badge bg-success-subtle text-success-emphasis">Activo</span></td>
-                        </tr>
-                        <tr>
-                            <td>Administracion</td>
-                            <td>Elena Rubio</td>
-                            <td class="d-none d-md-table-cell">2</td>
-                            <td><span class="badge bg-warning-subtle text-warning-emphasis">Revision</span></td>
-                        </tr>
+                        @forelse ($departments as $dept)
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold">{{ $dept->name }}</span>
+                                    @if($dept->code)
+                                        <small class="text-muted d-block">{{ $dept->code }}</small>
+                                    @endif
+                                </td>
+                                <td>{{ $dept->coordinador_name }}</td>
+                                <td class="d-none d-md-table-cell text-center">
+                                    <span class="badge bg-light text-dark border">{{ $dept->tutores_count }}</span>
+                                </td>
+                                <td>
+                                    @if($dept->is_active)
+                                        <span class="badge bg-success-subtle text-success-emphasis">Activo</span>
+                                    @else
+                                        <span class="badge bg-danger-subtle text-danger-emphasis">Inactivo</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No hay departamentos registrados.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -62,19 +80,48 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item px-0 d-flex justify-content-between">
                         <span>Departamentos activos</span>
-                        <strong>3</strong>
+                        <strong>{{ $stats['activos'] }}</strong>
                     </li>
                     <li class="list-group-item px-0 d-flex justify-content-between">
                         <span>Tutores asignados</span>
-                        <strong>9</strong>
+                        <strong>{{ $stats['tutores'] }}</strong>
                     </li>
                     <li class="list-group-item px-0 d-flex justify-content-between">
                         <span>Convenios en seguimiento</span>
-                        <strong>27</strong>
+                        <strong>{{ $stats['convenios'] }}</strong>
                     </li>
                 </ul>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal Nuevo Departamento -->
+<div class="modal fade" id="modalNuevoDepartamento" tabindex="-1" aria-labelledby="modalNuevoDepartamentoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('coordinacion.departamentos.store') }}" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNuevoDepartamentoLabel">Nuevo Departamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre del Departamento</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Código (Opcional)</label>
+                        <input type="text" class="form-control" id="code" name="code">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Departamento</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

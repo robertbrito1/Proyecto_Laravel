@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyContactController;
 use App\Http\Controllers\CompanyOutreachLogController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -46,9 +47,21 @@ Route::middleware('role:administrador')->group(function () {
 });
 
 // Vistas de coordinación orientadas a consulta y organización operativa.
-Route::view('/coordinacion/departamentos', 'coordinacion.departamentos')
+Route::get('/coordinacion/departamentos', [DepartmentController::class, 'index'])
     ->middleware('role:coordinadorFFE,administrador')
     ->name('coordinacion.departamentos');
+
+Route::post('/coordinacion/departamentos', [DepartmentController::class, 'store'])
+    ->middleware('role:coordinadorFFE,administrador')
+    ->name('coordinacion.departamentos.store');
+
+Route::put('/coordinacion/departamentos/{department}', [DepartmentController::class, 'update'])
+    ->middleware('role:coordinadorFFE,administrador')
+    ->name('coordinacion.departamentos.update');
+
+Route::delete('/coordinacion/departamentos/{department}', [DepartmentController::class, 'destroy'])
+    ->middleware('role:coordinadorFFE,administrador')
+    ->name('coordinacion.departamentos.destroy');
 
 Route::view('/coordinacion/categorias-empresas', 'coordinacion.categorias-empresas')
     ->middleware('role:coordinadorFFE,administrador')

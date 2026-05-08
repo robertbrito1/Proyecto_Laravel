@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\SafeEncrypted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,18 @@ class CompanyContact extends Model
         'email',
         'notes',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'full_name' => SafeEncrypted::class,
+            'nif' => SafeEncrypted::class,
+            'phone_1' => SafeEncrypted::class,
+            'phone_2' => SafeEncrypted::class,
+            'email' => SafeEncrypted::class,
+            'notes' => SafeEncrypted::class,
+        ];
+    }
 
     public function company(): BelongsTo
     {

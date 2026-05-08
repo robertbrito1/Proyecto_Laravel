@@ -13,12 +13,11 @@
         @if ($canSign && $agreement->status === 'pendiente_firma_centro')
             <form method="POST" action="{{ route('convenios.sign', $agreement) }}" class="m-0">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-success">Firmar convenio</button>
+                <button type="submit" class="btn btn-sm btn-success">Firmar por el centro</button>
             </form>
         @endif
         @if (in_array(auth()->user()->role, ['administrador','coordinadorFFE']))
-            <form method="POST" action="{{ route('convenios.destroy', $agreement) }}" class="m-0"
-                  onsubmit="return confirm('¿Eliminar este convenio? Esta accion no se puede deshacer.')">
+            <form method="POST" action="{{ route('convenios.destroy', $agreement) }}" class="m-0" onsubmit="return confirm('¿Eliminar este convenio? Esta accion no se puede deshacer.')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
@@ -34,33 +33,39 @@
     </div>
 @endif
 
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0 ps-3">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 @php
-    // Visual state color for agreement status badges
     $statusBadgeClass = match($agreement->status) {
-        'activo'          => 'success',
-        'firmado_centro', 'firmado_empresa' => 'primary',
-        'pendiente_firma' => 'warning',
-        'cancelado'       => 'danger',
-        'finalizado'      => 'secondary',
-        'renovacion'      => 'info',
-        default           => 'light text-dark',
+        'en_vigor' => 'success',
+        'firmado_empresa', 'pendiente_firma_centro' => 'primary',
+        'pendiente_generacion', 'generado', 'pendiente_firma_empresa' => 'warning',
+        'erroneo', 'caducado' => 'danger',
+        default => 'secondary',
     };
 @endphp
 
 <h5 class="fw-semibold mb-3">
     Convenio #{{ $agreement->id }}
     <span class="badge text-bg-{{ $statusBadgeClass }} ms-2">{{ $statuses[$agreement->status] ?? $agreement->status }}</span>
+    <span class="badge text-bg-light border ms-2">{{ $agreement->validity_label }}</span>
 </h5>
 
 <div class="row g-3">
-
-    {{-- Empresa --}}
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm h-100">
             <div class="card-header fw-semibold">Empresa</div>
             <div class="card-body">
                 <dl class="row mb-0">
-                    <dt class="col-sm-5">Razon social</dt>
+                    <dt class="col-sm-5">Razón social</dt>
                     <dd class="col-sm-7">{{ $agreement->company?->business_name ?? '—' }}</dd>
 
                     <dt class="col-sm-5">CIF</dt>
@@ -72,14 +77,13 @@
                     <dt class="col-sm-5">Email</dt>
                     <dd class="col-sm-7">{{ $agreement->company?->email ?? '—' }}</dd>
 
-                    <dt class="col-sm-5">Tlf principal</dt>
+                    <dt class="col-sm-5">Teléfono</dt>
                     <dd class="col-sm-7">{{ $agreement->company?->main_phone ?? '—' }}</dd>
                 </dl>
             </div>
         </div>
     </div>
 
-    {{-- Centro / Asignaciones --}}
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm h-100">
             <div class="card-header fw-semibold">Asignaciones IES</div>
@@ -97,24 +101,23 @@
                     <dt class="col-sm-5">Fecha firma</dt>
                     <dd class="col-sm-7">{{ $agreement->signed_at?->format('d/m/Y') ?? '—' }}</dd>
 
-                    <dt class="col-sm-5">Creado el</dt>
-                    <dd class="col-sm-7">{{ $agreement->created_at->format('d/m/Y H:i') }}</dd>
+                    <dt class="col-sm-5">Caduca el</dt>
+                    <dd class="col-sm-7">{{ $agreement->expires_at ? date('d/m/Y', strtotime($agreement->expires_at)) : '—' }}</dd>
                 </dl>
             </div>
         </div>
     </div>
 
-    {{-- Contacto de gestion --}}
     @if ($agreement->management_contact_name || $agreement->management_contact_email || $agreement->management_contact_phone)
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
-            <div class="card-header fw-semibold">Contacto de gestion</div>
+            <div class="card-header fw-semibold">Contacto de gestión</div>
             <div class="card-body">
                 <dl class="row mb-0">
                     <dt class="col-sm-5">Nombre</dt>
                     <dd class="col-sm-7">{{ $agreement->management_contact_name ?? '—' }}</dd>
 
-                    <dt class="col-sm-5">Telefono</dt>
+                    <dt class="col-sm-5">Teléfono</dt>
                     <dd class="col-sm-7">{{ $agreement->management_contact_phone ?? '—' }}</dd>
 
                     <dt class="col-sm-5">Email</dt>
@@ -125,7 +128,6 @@
     </div>
     @endif
 
-    {{-- Notas --}}
     @if ($agreement->notes)
     <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
@@ -137,7 +139,6 @@
     </div>
     @endif
 
-    {{-- Tutores empresa --}}
     @if ($agreement->companyTutors->isNotEmpty())
     <div class="col-12">
         <div class="card shadow-sm">
@@ -148,17 +149,15 @@
                         <tr>
                             <th scope="col">Nombre</th>
                             <th scope="col">DNI</th>
-                            <th scope="col">Cargo</th>
-                            <th scope="col">Horario / Turno</th>
+                            <th scope="col">Horario por defecto</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($agreement->companyTutors as $tutor)
                         <tr>
-                            <td>{{ $tutor->name }} {{ $tutor->last_name_1 }} {{ $tutor->last_name_2 }}</td>
+                            <td>{{ $tutor->full_name ?? '—' }}</td>
                             <td>{{ $tutor->dni ?? '—' }}</td>
-                            <td>{{ $tutor->position ?? '—' }}</td>
-                            <td>{{ $tutor->schedule ?? '—' }}</td>
+                            <td>{{ $tutor->default_schedule ?? '—' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -168,36 +167,78 @@
     </div>
     @endif
 
-    {{-- Documentos --}}
-    @if ($agreement->documents->isNotEmpty())
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-header fw-semibold">Documentos</div>
+    <div class="col-12 col-xl-5">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-semibold">Historial de documentos PDF</div>
+            <div class="card-body">
+                <p class="text-secondary small">Cada subida crea una versión nueva y conserva el estado anterior para trazabilidad.</p>
+
+                @if ($canManageDocuments)
+                    <form method="POST" action="{{ route('convenios.documents.store', $agreement) }}" enctype="multipart/form-data" class="row g-2">
+                        @csrf
+                        <div class="col-12">
+                            <label for="document" class="form-label">PDF del convenio</label>
+                            <input type="file" id="document" name="document" accept="application/pdf" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="document_status" class="form-label">Estado del documento</label>
+                            <select id="document_status" name="document_status" class="form-select form-select-sm" required>
+                                @foreach ($documentStatuses as $key => $label)
+                                    <option value="{{ $key }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="error_reason" class="form-label">Motivo de error si corresponde</label>
+                            <textarea id="error_reason" name="error_reason" class="form-control form-control-sm" rows="2" placeholder="Describe la incidencia si el documento es erróneo"></textarea>
+                        </div>
+                        <div class="col-12 d-grid">
+                            <button type="submit" class="btn btn-primary btn-sm">Guardar nueva versión</button>
+                        </div>
+                    </form>
+                @else
+                    <p class="text-muted mb-0">Tu perfil solo puede consultar el histórico documental.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header fw-semibold">Versiones registradas</div>
             <div class="table-responsive">
                 <table class="table table-sm align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Version</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Subido el</th>
+                            <th>Versión</th>
+                            <th>Estado</th>
+                            <th>Motivo</th>
+                            <th>Subido por</th>
+                            <th>Fecha</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($agreement->documents as $doc)
+                        @forelse ($agreement->documents as $doc)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
                             <td>v{{ $doc->version }}</td>
-                            <td><span class="badge text-bg-secondary">{{ $doc->status }}</span></td>
-                            <td class="small text-muted">{{ $doc->created_at->format('d/m/Y') }}</td>
+                            <td><span class="badge text-bg-secondary">{{ $documentStatuses[$doc->status] ?? $doc->status }}</span></td>
+                            <td>{{ $doc->error_reason ?: '—' }}</td>
+                            <td>{{ $doc->uploadedBy?->name ?? 'Sistema' }}</td>
+                            <td class="small text-muted">{{ $doc->uploaded_at?->format('d/m/Y H:i') ?? $doc->created_at->format('d/m/Y H:i') }}</td>
+                            <td>
+                                <a href="{{ route('convenios.documents.download', [$agreement, $doc]) }}" class="btn btn-sm btn-outline-primary">Descargar</a>
+                            </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">Todavía no hay documentos subidos para este convenio.</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    @endif
-
 </div>
 @endsection

@@ -1,0 +1,3 @@
+empresa,cif,actividad,categoria,departamento_codigo,profesor_email,tutor_ies_email,responsable_nombre,responsable_telefono,responsable_email,estado,fecha_firma,observaciones
+Empresa Demo A,B12345678,Desarrollo web,buena,INF,profesor.daw@centro.local,tutor.dam@centro.local,Ana López,600555111,ana@demoa.es,borrador,,Alta inicial desde Excel
+Empresa Demo B,C87654321,Sistemas,funciona,FFE,coordinacion.ffe@centro.local,tutor.dam@centro.local,Carlos Pérez,600555222,carlos@demob.es,pendiente_generacion,,Pendiente de generar PDF

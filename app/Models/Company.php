@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\SafeEncrypted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,6 +33,23 @@ class Company extends Model
         'representative_last_name_2',
         'notes',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'tax_id' => SafeEncrypted::class,
+            'social_address' => SafeEncrypted::class,
+            'social_postal_code' => SafeEncrypted::class,
+            'main_phone' => SafeEncrypted::class,
+            'secondary_phone' => SafeEncrypted::class,
+            'email' => SafeEncrypted::class,
+            'representative_nif' => SafeEncrypted::class,
+            'representative_name' => SafeEncrypted::class,
+            'representative_last_name_1' => SafeEncrypted::class,
+            'representative_last_name_2' => SafeEncrypted::class,
+            'notes' => SafeEncrypted::class,
+        ];
+    }
 
     public function workCenters(): HasMany
     {

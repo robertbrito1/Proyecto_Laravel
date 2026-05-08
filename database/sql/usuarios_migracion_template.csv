@@ -1,0 +1,8 @@
+name,email,role,department_code,phone,is_active
+Administrador Sistema,admin.sistema@centro.local,administrador,ADM,600100001,1
+Direccion del Centro,direccion.centro@centro.local,direccion,ADM,600100002,1
+Coordinacion FFE,coordinacion.ffe@centro.local,coordinadorFFE,FFE,600100003,1
+Tutor DAM,tutor.dam@centro.local,tutor,INF,600100004,1
+Profesor DAW,profesor.daw@centro.local,profesor,INF,600100005,1
+Secretaria Centro,secretaria.centro@centro.local,secretaria,ADM,600100006,1
+Empresa Colaboradora,empresa.contacto@externa.local,empresa,SAN,600100007,1

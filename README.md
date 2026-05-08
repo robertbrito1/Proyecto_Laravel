@@ -9,54 +9,58 @@
 
 ## Instalación y configuración del proyecto
 
-Sigue estos pasos para instalar las dependencias y activar `php artisan` en tu entorno local:
+El proyecto quedó preparado para trabajar con **PHP + Laravel + SQL Server**, sin depender de Node.js ni Vite.
 
 ### Requisitos previos
 
 - PHP >= 8.3
-- [Composer](https://getcomposer.org/)
-- Node.js y npm (para los assets del frontend)
+- Composer
+- SQL Server
+- Extensiones de PHP para SQL Server: pdo_sqlsrv y sqlsrv
 
-### Pasos de instalación
+### Configuración rápida
+
+1. Instala las dependencias de PHP:
 
 ```bash
-# 1. Clonar el repositorio (si aún no lo tienes)
-git clone https://github.com/robertbrito1/Proyecto_Laravel.git
-cd Proyecto_Laravel
-
-# 2. Instalar las dependencias de PHP (activa php artisan)
 composer install
-
-# 3. Copiar el archivo de entorno
-cp .env.example .env
-
-# 4. Generar la clave de la aplicación
-php artisan key:generate
-
-# 5. Crear la base de datos SQLite
-touch database/database.sqlite
-
-# 6. Ejecutar las migraciones
-php artisan migrate
-
-# 7. (Opcional) Instalar dependencias de Node.js y compilar assets
-npm install
-npm run build
 ```
 
-O bien, puedes ejecutar todos los pasos anteriores de una sola vez usando el script de configuración incluido:
+2. Copia el archivo de entorno y genera la clave:
 
 ```bash
-composer run setup
+copy .env.example .env
+php artisan key:generate
 ```
 
-### Iniciar el servidor de desarrollo
+3. Crea una base de datos llamada **proyecto_laravel** en SQL Server.
+
+4. Revisa en el archivo .env estos valores:
+
+```env
+DB_CONNECTION=sqlsrv
+DB_HOST=localhost
+DB_PORT=1433
+DB_DATABASE=proyecto_laravel
+DB_USERNAME=sa
+DB_PASSWORD=
+DB_ENCRYPT=false
+DB_TRUST_SERVER_CERTIFICATE=true
+```
+
+5. Ejecuta las migraciones:
+
+```bash
+php artisan migrate
+```
+
+6. Inicia la aplicación:
 
 ```bash
 php artisan serve
 ```
 
-El servidor estará disponible en `http://localhost:8000`.
+El sistema quedará disponible en http://127.0.0.1:8000.
 
 ---
 

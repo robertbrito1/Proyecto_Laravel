@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Department;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 /**
- * Seeder principal que carga departamentos y usuarios básicos para arrancar el proyecto.
+ * Seeder principal que carga usuarios y departamentos desde un script SQL externo.
  */
 class DatabaseSeeder extends Seeder
 {
@@ -17,84 +16,20 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // Crea o reutiliza los departamentos base usados por los perfiles de ejemplo.
-        $informatica = Department::updateOrCreate(
-            ['name' => 'Informatica'],
-            ['code' => 'INF', 'is_active' => true],
-        );
+        $driver = DB::connection()->getDriverName();
+        $sqlFile = match ($driver) {
+            'mysql', 'mariadb' => database_path('sql/usuarios_iniciales_mysql.sql'),
+            'sqlsrv' => database_path('sql/usuarios_iniciales_sqlserver.sql'),
+            default => database_path('sql/usuarios_iniciales_mysql.sql'),
+        };
 
-        $sanidad = Department::updateOrCreate(
-            ['name' => 'Sanidad'],
-            ['code' => 'SAN', 'is_active' => true],
-        );
-
-        // Define un conjunto mínimo de usuarios para probar cada rol de la aplicación.
-        $users = [
-            [
-                'name' => 'Admin FFE',
-                'email' => 'admin@ffe.local',
-                'role' => 'administrador',
-                'department_id' => $informatica->id,
-                'phone' => '600000001',
-            ],
-            [
-                'name' => 'Direccion Centro',
-                'email' => 'direccion@ffe.local',
-                'role' => 'direccion',
-                'department_id' => null,
-                'phone' => '600000002',
-            ],
-            [
-                'name' => 'Coordinacion FFE',
-                'email' => 'coordinacion@ffe.local',
-                'role' => 'coordinadorFFE',
-                'department_id' => $informatica->id,
-                'phone' => '600000003',
-            ],
-            [
-                'name' => 'Tutor DAM',
-                'email' => 'tutor@ffe.local',
-                'role' => 'tutor',
-                'department_id' => $informatica->id,
-                'phone' => '600000004',
-            ],
-            [
-                'name' => 'Profesor FFE',
-                'email' => 'profesor@ffe.local',
-                'role' => 'profesor',
-                'department_id' => $informatica->id,
-                'phone' => '600000005',
-            ],
-            [
-                'name' => 'Secretaria FFE',
-                'email' => 'secretaria@ffe.local',
-                'role' => 'secretaria',
-                'department_id' => null,
-                'phone' => '600000006',
-            ],
-            [
-                'name' => 'Empresa Externa',
-                'email' => 'empresa@ffe.local',
-                'role' => 'empresa',
-                'department_id' => $sanidad->id,
-                'phone' => '600000007',
-            ],
-        ];
-
-        foreach ($users as $data) {
-            // Inserta cada usuario de prueba sin duplicar registros si ya existían.
-            User::updateOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'role' => $data['role'],
-                    'department_id' => $data['department_id'],
-                    'phone' => $data['phone'],
-                    'password' => Hash::make('password'),
-                    'is_active' => true,
-                    'email_verified_at' => now(),
-                ],
-            );
+        if (! File::exists($sqlFile)) {
+            $this->command?->warn('No se encontró el archivo SQL de usuarios iniciales.');
+            return;
         }
+
+        DB::unprepared(File::get($sqlFile));
+
+        $this->command?->info('Datos iniciales importados desde el archivo SQL.');
     }
 }

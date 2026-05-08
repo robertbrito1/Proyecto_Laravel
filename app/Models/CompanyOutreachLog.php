@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\SafeEncrypted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,9 @@ class CompanyOutreachLog extends Model
     protected function casts(): array
     {
         return [
+            'contact_email' => SafeEncrypted::class,
+            'contact_phone' => SafeEncrypted::class,
+            'notes' => SafeEncrypted::class,
             'contacted_at' => 'datetime',
         ];
     }

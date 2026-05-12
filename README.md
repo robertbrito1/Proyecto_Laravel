@@ -26,6 +26,8 @@ cd Proyecto_Laravel
 
 # 2. Instalar las dependencias de PHP (activa php artisan)
 composer install
+si no tienes php version 8.3 pon el siguiente comando
+composer install --ignore-platform-reqs
 ```
 
 # 3. Copiar el archivo de entorno

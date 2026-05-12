@@ -7,37 +7,17 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## 🚀 Instalación y Configuración Rápida (SQLite)
-
-Este proyecto está configurado para funcionar con **SQLite** de forma predeterminada, lo que elimina la necesidad de configurar servidores MySQL externos y garantiza que el proyecto funcione "out-of-the-box".
-
-### Requisitos Previos
 
 - **PHP >= 8.3**
 - [Composer](https://getcomposer.org/)
-
-### 🛠️ Opción A: Configuración Automática (Recomendado para Windows)
-
-Si estás en Windows, simplemente ejecuta el archivo:
-```bash
-setup.bat
-```
-Este script automatiza todo el proceso:
-1. Crea el archivo `.env` a partir del `.env.example`.
-2. Crea la base de datos SQLite en `database/database.sqlite`.
-3. Instala las dependencias de Composer.
-4. Genera la clave única de la aplicación.
-5. Ejecuta las migraciones y **carga automáticamente los usuarios de prueba**.
-
-### 💻 Opción B: Configuración Manual (Linux/Mac/Consola)
-
-Si prefieres realizar los pasos manualmente o te encuentras en otro sistema operativo:
 
 1. **Clonar e instalar dependencias**:
    ```bash
    git clone https://github.com/robertbrito1/Proyecto_Laravel.git
    cd Proyecto_Laravel
    composer install
+   si no funciona el de arriba coloca este
+   composer install --ignore-platform-reqs
    ```
 
 2. **Configurar el entorno**:

@@ -61,7 +61,17 @@ php artisan serve
 
 El servidor estará disponible en `http://localhost:8000`.
 
----
+
+usuarios para probar
+---| Email | Contraseña | Rol |
+|-------|------------|-----|
+| admin@ffe.local | password | Administrador |
+| direccion@ffe.local | password | Dirección |
+| coordinacion@ffe.local | password | Coordinador FFE |
+| tutor@ffe.local | password | Tutor |
+| profesor@ffe.local | password | Profesor |
+| secretaria@ffe.local | password | Secretaría |
+| empresa@ffe.local | password | Empresa |
 
 ## About Laravel
 

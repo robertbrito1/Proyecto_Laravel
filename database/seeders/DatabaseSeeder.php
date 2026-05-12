@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $sqlFile = match ($driver) {
             'mysql', 'mariadb' => database_path('sql/usuarios_iniciales_mysql.sql'),
             'sqlsrv' => database_path('sql/usuarios_iniciales_sqlserver.sql'),
+            'sqlite' => database_path('sql/usuarios_iniciales_sqlite.sql'),
             default => database_path('sql/usuarios_iniciales_mysql.sql'),
         };
 

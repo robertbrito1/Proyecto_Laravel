@@ -7,71 +7,85 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Instalación y configuración del proyecto
+## 🚀 Instalación y Configuración Rápida (SQLite)
 
-Sigue estos pasos para instalar las dependencias y activar `php artisan` en tu entorno local:
+Este proyecto está configurado para funcionar con **SQLite** de forma predeterminada, lo que elimina la necesidad de configurar servidores MySQL externos y garantiza que el proyecto funcione "out-of-the-box".
 
-### Requisitos previos
+### Requisitos Previos
 
-- PHP >= 8.3
+- **PHP >= 8.3**
 - [Composer](https://getcomposer.org/)
-- Node.js y npm (para los assets del frontend)
 
-### Pasos de instalación
+### 🛠️ Opción A: Configuración Automática (Recomendado para Windows)
 
+Si estás en Windows, simplemente ejecuta el archivo:
 ```bash
-# 1. Clonar el repositorio (si aún no lo tienes)
-git clone https://github.com/robertbrito1/Proyecto_Laravel.git
-cd Proyecto_Laravel
-
-# 2. Instalar las dependencias de PHP (activa php artisan)
-composer install
-si no tienes php version 8.3 pon el siguiente comando
-composer install --ignore-platform-reqs
+setup.bat
 ```
+Este script automatiza todo el proceso:
+1. Crea el archivo `.env` a partir del `.env.example`.
+2. Crea la base de datos SQLite en `database/database.sqlite`.
+3. Instala las dependencias de Composer.
+4. Genera la clave única de la aplicación.
+5. Ejecuta las migraciones y **carga automáticamente los usuarios de prueba**.
 
-# 3. Copiar el archivo de entorno
-cp .env.example .env
+### 💻 Opción B: Configuración Manual (Linux/Mac/Consola)
 
-# 4. Generar la clave de la aplicación
-php artisan key:generate
+Si prefieres realizar los pasos manualmente o te encuentras en otro sistema operativo:
 
-# 5. Crear la base de datos SQLite
-touch database/database.sqlite
+1. **Clonar e instalar dependencias**:
+   ```bash
+   git clone https://github.com/robertbrito1/Proyecto_Laravel.git
+   cd Proyecto_Laravel
+   composer install
+   ```
 
-# 6. Ejecutar las migraciones
-php artisan migrate
+2. **Configurar el entorno**:
+   ```bash
+   cp .env.example .env
+   # El proyecto ya viene pre-configurado para SQLite en el .env
+   ```
 
-# 7. (Opcional) Instalar dependencias de Node.js y compilar assets
-npm install
-npm run build
-```
+3. **Preparar la base de datos**:
+   ```bash
+   # Crear el archivo de base de datos
+   touch database/database.sqlite
+   
+   # Generar clave de aplicación
+   php artisan key:generate
+   
+   # Ejecutar migraciones y cargar datos iniciales
+   php artisan migrate:fresh --seed
+   ```
 
-O bien, puedes ejecutar todos los pasos anteriores de una sola vez usando el script de configuración incluido:
+---
 
-```bash
-composer run setup
-```
+## 👥 Usuarios de Prueba
 
-### Iniciar el servidor de desarrollo
+Puedes usar las siguientes credenciales para acceder y probar las diferentes funcionalidades del sistema. 
+**Contraseña para todos los usuarios:** `password`
 
+| Email | Rol / Permisos |
+| :--- | :--- |
+| **admin@ffe.local** | Administrador del Sistema |
+| **direccion@ffe.local** | Dirección del Centro |
+| **coordinacion@ffe.local** | Coordinador FFE |
+| **tutor@ffe.local** | Tutor |
+| **profesor@ffe.local** | Profesor |
+| **secretaria@ffe.local** | Secretaría |
+| **empresa@ffe.local** | Empresa Colaboradora |
+
+---
+
+## 🌐 Iniciar el Servidor de Desarrollo
+
+Una vez completada la instalación, inicia el servidor local:
 ```bash
 php artisan serve
 ```
+El servidor estará disponible en: [http://localhost:8000](http://localhost:8000)
 
-El servidor estará disponible en `http://localhost:8000`.
-
-
-usuarios para probar
----| Email | Contraseña | Rol |
-|-------|------------|-----|
-| admin@ffe.local | password | Administrador |
-| direccion@ffe.local | password | Dirección |
-| coordinacion@ffe.local | password | Coordinador FFE |
-| tutor@ffe.local | password | Tutor |
-| profesor@ffe.local | password | Profesor |
-| secretaria@ffe.local | password | Secretaría |
-| empresa@ffe.local | password | Empresa |
+---
 
 ## About Laravel
 

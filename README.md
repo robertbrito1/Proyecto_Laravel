@@ -28,14 +28,10 @@
 
 3. **Preparar la base de datos**:
    ```bash
-   # Crear el archivo de base de datos
-   touch database/database.sqlite
    
    # Generar clave de aplicación
    php artisan key:generate
-   
-   # Ejecutar migraciones y cargar datos iniciales
-   php artisan migrate:fresh --seed
+   php artisan migrate
    ```
 
 ---

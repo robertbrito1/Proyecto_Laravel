@@ -32,6 +32,8 @@
    # Generar clave de aplicación
    php artisan key:generate
    php artisan migrate
+   luego de la migracion hay que cargar la base de datos con el siguiente comando
+   php artisan db:seed
    ```
 
 ---

@@ -11,7 +11,8 @@
 - **PHP >= 8.3**
 - [Composer](https://getcomposer.org/)
 
-** 
+**Este proyecto usa plantillas Blade de Laravel, lo que nos permite diseñar las páginas web de forma ordenada, 
+separando el código visual del código del servidor y reutilizando partes de la web para no escribir el mismo código dos veces.**
 1. **Clonar e instalar dependencias**:
    ```bash
    git clone https://github.com/robertbrito1/Proyecto_Laravel.git
